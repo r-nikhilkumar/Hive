@@ -1,0 +1,7 @@
+export {default as Home} from './Home'
+export {default as Explore} from './Explore'
+export {default as Chats} from './Chats'
+export {default as Pulse} from './Pulse'
+export {default as CreatePost} from './CreatePost'
+export {default as Settings} from './Settings'
+export {default as Profile} from './Profile'
