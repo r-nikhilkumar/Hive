@@ -78,11 +78,7 @@ const toggleLikePostApi = async (req, res) => {
 
     const updatedPost = await toggleLikePost(postId, user);
 
-    const message = updatedPost.likers.includes(user.id)
-      ? "Post liked"
-      : "Post unliked";
-
-    return res.status(200).json({ post: updatedPost, message });
+    return res.status(200).json({ post: updatedPost, message: "Like toggled" });
   } catch (error) {
     return res.status(500).send({ error: error.message });
   }
