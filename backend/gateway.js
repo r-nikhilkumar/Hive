@@ -16,6 +16,7 @@ app.get("/", (req, res)=>{
 
 app.use("/users", createProxyMiddleware({target:`http://localhost:${process.env.USER_PORT}`, changeOrigin:true}))
 app.use("/posts", createProxyMiddleware({target:`http://localhost:${process.env.POST_PORT}`, changeOrigin:true}))
+app.use("/chats", createProxyMiddleware({target:`http://localhost:${process.env.CHAT_PORT}`, changeOrigin:true}))
 
 app.listen(PORT, ()=>{
     console.log("Listening at "+PORT);
