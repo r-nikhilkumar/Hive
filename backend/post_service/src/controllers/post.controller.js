@@ -1,3 +1,4 @@
+const { getPostFromCache, cachePost } = require("../redis/post.redis");
 const {
   getPostById,
   getPosts,
@@ -16,17 +17,48 @@ const getUser = async (req, res) => {
     const user = req.user;
     return res.status(200).json(ApiResponse.success(user, "User sent"));
   } catch (error) {
-    return res.status(500).json(ApiError.error("Failed to fetch user", error.message));
+    return res
+      .status(500)
+      .json(ApiError.error("Failed to fetch user", error.message));
   }
 };
 
 const getPostApi = async (req, res) => {
   try {
-    const id = req.params.id;
-    const post = await getPostById(id);
-    return res.status(200).json(ApiResponse.success(post, "Post sent"));
+    const postId = req.params.id;
+
+    let cachedPost;
+
+    try {
+      cachedPost = await getPostFromCache(postId);
+    } catch (cacheError) {
+      console.error("Cache error: ", cacheError.message);
+    }
+
+    if (cachedPost) {
+      return res
+        .status(200)
+        .json(ApiResponse.success(cachedPost, "Post sent from cache"));
+    } else {
+      const post = await getPostById(postId);
+
+      if (!post) {
+        return res.status(404).json(ApiError.error("Post not found"));
+      }
+
+      try {
+        await cachePost(postId, post);
+      } catch (cacheError) {
+        console.error("Error caching post data: ", cacheError.message);
+      }
+
+      return res.status(200).json(ApiResponse.success(post, "Post sent"));
+    }
   } catch (error) {
-    return res.status(500).json(ApiError.error("Failed to fetch post", error.message));
+    console.error("General error: ", error.message);
+    return res
+      .status(500)
+      .json(ApiError.error("Failed to fetch post", error.message));
   }
 };
 
@@ -35,7 +67,9 @@ const getPostsApi = async (req, res) => {
     const posts = await getPosts();
     return res.status(200).json(ApiResponse.success(posts, "Posts sent"));
   } catch (error) {
-    return res.status(500).json(ApiError.error("Failed to fetch posts", error.message));
+    return res
+      .status(500)
+      .json(ApiError.error("Failed to fetch posts", error.message));
   }
 };
 
@@ -46,7 +80,9 @@ const createPostApi = async (req, res) => {
     const newPost = await createPost({ ...post, userId: user.id });
     return res.status(201).json(ApiResponse.success(newPost, "Post created"));
   } catch (error) {
-    return res.status(500).json(ApiError.error("Failed to create post", error.message));
+    return res
+      .status(500)
+      .json(ApiError.error("Failed to create post", error.message));
   }
 };
 
@@ -55,9 +91,13 @@ const updatePostApi = async (req, res) => {
     const id = req.params.id;
     const post = req.body;
     const updatedPost = await updatePost(id, post);
-    return res.status(200).json(ApiResponse.success(updatedPost, "Post updated"));
+    return res
+      .status(200)
+      .json(ApiResponse.success(updatedPost, "Post updated"));
   } catch (error) {
-    return res.status(500).json(ApiError.error("Failed to update post", error.message));
+    return res
+      .status(500)
+      .json(ApiError.error("Failed to update post", error.message));
   }
 };
 
@@ -67,7 +107,9 @@ const deletePostApi = async (req, res) => {
     const post = await deletePost(id);
     return res.status(200).json(ApiResponse.success(post, "Post deleted"));
   } catch (error) {
-    return res.status(500).json(ApiError.error("Failed to delete post", error.message));
+    return res
+      .status(500)
+      .json(ApiError.error("Failed to delete post", error.message));
   }
 };
 
@@ -76,9 +118,13 @@ const toggleLikePostApi = async (req, res) => {
     const postId = req.params.id;
     const user = req.user;
     const updatedPost = await toggleLikePost(postId, user);
-    return res.status(200).json(ApiResponse.success(updatedPost, "Like toggled"));
+    return res
+      .status(200)
+      .json(ApiResponse.success(updatedPost, "Like toggled"));
   } catch (error) {
-    return res.status(500).json(ApiError.error("Failed to toggle like", error.message));
+    return res
+      .status(500)
+      .json(ApiError.error("Failed to toggle like", error.message));
   }
 };
 
@@ -90,16 +136,22 @@ const toggleCommentApi = async (req, res) => {
     if (commentId) {
       // Delete comment
       const updatedPost = await deleteComment(postId, commentId);
-      return res.status(200).json(ApiResponse.success(updatedPost, "Comment deleted"));
+      return res
+        .status(200)
+        .json(ApiResponse.success(updatedPost, "Comment deleted"));
     }
 
     // Add comment
     const comment = req.body.comment;
     const user = req.user;
     const updatedPost = await addComment(postId, user, comment);
-    return res.status(201).json(ApiResponse.success(updatedPost, "Comment added"));
+    return res
+      .status(201)
+      .json(ApiResponse.success(updatedPost, "Comment added"));
   } catch (error) {
-    return res.status(500).json(ApiError.error("Failed to toggle comment", error.message));
+    return res
+      .status(500)
+      .json(ApiError.error("Failed to toggle comment", error.message));
   }
 };
 
