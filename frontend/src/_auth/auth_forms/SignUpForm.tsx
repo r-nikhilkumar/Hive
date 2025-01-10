@@ -29,6 +29,7 @@ function SignUpForm() {
       email: "",
       password: ""
     },
+    mode: "onBlur",
   });
 
   function onSubmit(values: z.infer<typeof SignUpValidation>) {

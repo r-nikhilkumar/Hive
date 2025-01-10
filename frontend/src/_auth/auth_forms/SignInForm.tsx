@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import React from "react";
-import { SignUpValidation, SignInValidation } from "@/lib/validation";
+import { SignInValidation } from "@/lib/validation";
 import Loader from "@/components/shared/Loader";
 import { Link } from "react-router-dom";
 
@@ -27,6 +27,7 @@ function SignInForm() {
       userOrEmail: "",
       password: ""
     },
+    mode: "onBlur",
   });
 
   function onSubmit(values: z.infer<typeof SignInValidation>) {
