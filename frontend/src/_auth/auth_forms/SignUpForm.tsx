@@ -27,7 +27,7 @@ function SignUpForm() {
       name: "",
       username: "",
       email: "",
-      password: ""
+      password: "",
     },
     mode: "onBlur",
   });
@@ -47,7 +47,9 @@ function SignUpForm() {
           height={100}
         />
         <p className="h3-bold md:h2-bold pt-3 sm:pt-12">Create an account</p>
-        <p className="text-light-3 small-medium md:base-regular py-1">Welcome, create to connect!</p>
+        <p className="text-light-3 small-medium md:base-regular py-1">
+          Welcome, create to connect!
+        </p>
       </div>
       <form
         onSubmit={form.handleSubmit(onSubmit)}

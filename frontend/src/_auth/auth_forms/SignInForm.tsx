@@ -25,7 +25,7 @@ function SignInForm() {
     resolver: zodResolver(SignInValidation),
     defaultValues: {
       userOrEmail: "",
-      password: ""
+      password: "",
     },
     mode: "onBlur",
   });
@@ -44,9 +44,14 @@ function SignInForm() {
           height={100}
         />
         <p className="h3-bold md:h2-bold pt-3 sm:pt-12">Log In</p>
-        <p className="text-light-3 small-medium md:base-regular py-2">Welcome back, log in to connect again!</p>
+        <p className="text-light-3 small-medium md:base-regular py-2">
+          Welcome back, log in to connect again!
+        </p>
       </div>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 lg:w-420">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4 lg:w-420"
+      >
         <FormField
           control={form.control}
           name="userOrEmail"
@@ -82,9 +87,20 @@ function SignInForm() {
           )}
         />
         <Button type="submit" className="shad-button_primary space-y-3 w-full">
-          {isLoading ? (<div className="flex-center gap-2"><Loader/> Loading </div>): "Submit"}
+          {isLoading ? (
+            <div className="flex-center gap-2">
+              <Loader /> Loading{" "}
+            </div>
+          ) : (
+            "Submit"
+          )}
         </Button>
-        <p className="text-sm flex justify-center w-full">Do not have account? &nbsp; <span className="text-secondary-500"><Link to="/sign-up">create an account</Link></span></p>
+        <p className="text-sm flex justify-center w-full">
+          Do not have account? &nbsp;{" "}
+          <span className="text-secondary-500">
+            <Link to="/sign-up">create an account</Link>
+          </span>
+        </p>
       </form>
     </Form>
   );
