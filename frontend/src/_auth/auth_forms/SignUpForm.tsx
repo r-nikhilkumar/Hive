@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -6,21 +7,23 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import React from "react";
 import { SignUpValidation } from "@/lib/validation";
 import Loader from "@/components/shared/Loader";
 import { Link } from "react-router-dom";
+import { useSignUpMutation } from "@/redux/api/authApi";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function SignUpForm() {
-  const isLoading = false;
+  const [signUp, { isSuccess, isLoading, isError, error }] =
+    useSignUpMutation();
 
+  // Form configuration
   const form = useForm<z.infer<typeof SignUpValidation>>({
     resolver: zodResolver(SignUpValidation),
     defaultValues: {
@@ -32,13 +35,27 @@ function SignUpForm() {
     mode: "onBlur",
   });
 
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Account created successfully");
+    }
+    if (isError) {
+      toast.error(error?.data?.message || "An error occurred");
+    }
+  }, [isSuccess, isError, error]);
+
+  // Submit handler
   function onSubmit(values: z.infer<typeof SignUpValidation>) {
-    console.log("tapped");
-    console.log(values);
+    try {
+      signUp(values);
+    } catch (err) {
+      toast.error(err?.data?.message || "An error occurred");
+    }
   }
 
   return (
     <Form {...form}>
+      <ToastContainer />
       <div className="sm:420 flex-center flex-col pr-3">
         <img
           src="/assets/images/full_logo_white_1.png"

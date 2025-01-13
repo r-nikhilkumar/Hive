@@ -6,20 +6,27 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import React from "react";
+import React, { useEffect } from "react";
 import { SignInValidation } from "@/lib/validation";
 import Loader from "@/components/shared/Loader";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useSignInMutation } from "@/redux/api/authApi";
+import { useDispatch } from "react-redux";
+import { setAuthState } from "@/redux/slices/authSlice";
+import { getTokenFromCookies } from "@/utils/auth";
 
 function SignInForm() {
-  const isLoading = false;
+  const [signIn, { isLoading, isSuccess, isError, error }] =
+    useSignInMutation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const form = useForm<z.infer<typeof SignInValidation>>({
     resolver: zodResolver(SignInValidation),
@@ -30,12 +37,39 @@ function SignInForm() {
     mode: "onBlur",
   });
 
-  function onSubmit(values: z.infer<typeof SignInValidation>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof SignInValidation>) {
+    try {
+      const { userOrEmail, password } = values;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      let data;
+
+      if (emailRegex.test(userOrEmail)) {
+        data = { email: userOrEmail, password };
+      } else {
+        data = { username: userOrEmail, password };
+      }
+
+      signIn(data); // Call the signIn mutation
+    } catch (err) {
+      toast.error("An error occurred");
+    }
   }
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Logged in successfully");
+      const token = getTokenFromCookies();
+      dispatch(setAuthState({ isAuthenticated: true, token }));
+      navigate("/"); // Redirect to home page
+    }
+    if (isError) {
+      toast.error(error?.data?.message || "An error occurred");
+    }
+  }, [isSuccess, isError, error, navigate, dispatch]);
 
   return (
     <Form {...form}>
+      <ToastContainer />
       <div className="sm:420 flex-center flex-col pr-3">
         <img
           src="/assets/images/full_logo_white_1.png"
