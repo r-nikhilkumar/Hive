@@ -2,7 +2,10 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
 
 const verifyUser = async (req, res, next) => {
-  const token = req.header("Authorization").replace("Bearer ", "");
+  let token = req.cookies.token;
+  if(!token) {
+    token = req.header("Authorization").replace("Bearer ", "");
+  }
   if (!token) {
     return res.status(401).send({ error: "Access denied. No token provided." });
   }

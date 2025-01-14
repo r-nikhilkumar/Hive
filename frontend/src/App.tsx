@@ -16,6 +16,8 @@ import {
 import ChatScreen from "./components/shared/chats/ChatScreen";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import "./globals.css";
+import Notifications from "./_root/pages/Notifications";
+import { useSignInMutation } from "./redux/api/authApi";
 
 function App() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -55,6 +57,7 @@ function App() {
             {isMobile && <Route path="/chats/:id" element={<ChatScreen />} />}
             <Route path="/create-post" element={<CreatePost />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/notification" element={<Notifications />} />
             <Route path="/u/:id" element={<Profile />} />
           </Route>
         </Route>

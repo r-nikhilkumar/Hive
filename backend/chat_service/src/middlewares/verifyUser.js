@@ -2,7 +2,10 @@ const { getUserFromToken } = require("../config/jwt");
 
 const verifyUser = async (req, res, next) => {
   try {
-    const token = req.header("Authorization")?.split(" ")[1];
+    let token = req.cookies.token;
+    if (!token) {
+      token = req.header("Authorization").replace("Bearer ", "");
+    }
 
     if (!token) {
       return res
