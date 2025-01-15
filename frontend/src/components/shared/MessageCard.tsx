@@ -39,7 +39,7 @@ const MessageCard = ({ message, messageType, type, timestamp, status, profilePic
 
   return (
     <div className={`message-card ${type}`}>
-      {type === "message-left" && <img src={profilePic} alt="Profile" className="profile-pic" />}
+      {type === "message-left" && <img src={profilePic ?? "/assets/icons/profile-placeholder.svg"} alt="Profile" className="profile-pic" />}
       <div className="message-content">
         {renderMessageContent()}
         <div className="message-info">
@@ -47,7 +47,7 @@ const MessageCard = ({ message, messageType, type, timestamp, status, profilePic
           {type === "message-right" && getStatusIcon()}
         </div>
       </div>
-      {type === "message-right" && <img src={profilePic} alt="Profile" className="profile-pic" />}
+      {type === "message-right" && <img src={profilePic ?? "/assets/icons/profile-placeholder.svg"} alt="Profile" className="profile-pic" />}
     </div>
   );
 };
