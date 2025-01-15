@@ -177,7 +177,6 @@ function ChatScreen() {
       <div className="chat-area" ref={chatAreaRef}>
         <div className="chat-messages">
           {messages?.map((msg) => {
-            console.log(msg);
             return (
               <MessageCard
                 key={msg._id}

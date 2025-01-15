@@ -72,7 +72,7 @@ io.on("connection", (socket) => {
   // console.log(`User connected to chat service: ${socket.id}, User ID: ${socket.user.id}`);
 
   socket.on("joinRoom", async ({ chatRoomId }) => {
-    console.log(`User joined room ${chatRoomId} on chat service`);
+    // console.log(`User joined room ${chatRoomId} on chat service`);
     socket.join(chatRoomId);
 
     if (!activeUsers[chatRoomId]) {
@@ -89,8 +89,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("message", async ({ chatRoomId, message, attachments }) => {
-    console.log(`Received message for room ${chatRoomId}:`, message);
-    console.log("sendid id", socket.id);
+    // console.log(`Received message for room ${chatRoomId}:`, message);
+    // console.log("sendid id", socket.id);
     // console.log("userid id", socket.user.id);
 
     // Save message to database
@@ -101,7 +101,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("leaveRoom", ({ chatRoomId }) => {
-    console.log(`User left room ${chatRoomId} on chat service`);
+    // console.log(`User left room ${chatRoomId} on chat service`);
     socket.leave(chatRoomId);
 
     if (activeUsers[chatRoomId]) {
