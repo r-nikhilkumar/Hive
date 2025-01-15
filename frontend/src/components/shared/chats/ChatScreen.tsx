@@ -28,13 +28,9 @@ function ChatScreen() {
   const audioChunksRef = useRef<Blob[]>([]);
   const chatAreaRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const currentUserId = useSelector((state)=> state.auth.userId)
+  const currentUserId = useSelector((state)=> state.auth.userId);
 
   useEffect(() => {
-    // const cachedMessages = getCachedMessages(chatRoomId);
-    // if (cachedMessages) {
-    //   setMessages(cachedMessages);
-    // } else {
     joinRoom(chatRoomId);
     receivePreviousMessages((messages) => {
       setMessages(messages);
@@ -55,7 +51,6 @@ function ChatScreen() {
         return updatedMessages;
       });
     });
-    // }
 
     return () => {
       leaveRoom(chatRoomId);
@@ -159,6 +154,21 @@ function ChatScreen() {
     }
   };
 
+  // Handle Enter key for sending messages
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (isMobile) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        return;
+      }
+    } else {
+      if (e.key === "Enter" && newMessage.trim() !== "" && !e.shiftKey) {
+        e.preventDefault();
+        handleSendMessage();
+      }
+    }
+  };
+  
+
   return (
     <div className="chat-screen">
       <div className="chat-header">
@@ -182,11 +192,7 @@ function ChatScreen() {
                 key={msg._id}
                 message={msg.message}
                 messageType={msg.attachments.length ? "photo" : "text"} // Change this logic as per your message type
-                type={
-                  msg.userId === currentUserId
-                    ? "message-right"
-                    : "message-left"
-                }
+                type={msg.userId === currentUserId ? "message-right" : "message-left"}
                 timestamp={msg.timestamp}
                 status={msg.status}
                 profilePic={undefined}
@@ -218,6 +224,7 @@ function ChatScreen() {
           multiple
           onChange={handleFileChange}
           style={{ display: "none" }}
+          onKeyDown={handleKeyDown}
         />
         {(!recorderControls.isRecording || !isMobile) && (
           <input
@@ -226,6 +233,7 @@ function ChatScreen() {
             className="chat-input_field"
             value={newMessage}
             onChange={handleTyping}
+            onKeyDown={handleKeyDown} // Add keydown event listener
           />
         )}
         <AudioRecorder
