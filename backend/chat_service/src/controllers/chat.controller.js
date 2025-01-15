@@ -22,7 +22,8 @@ const getChatRoomsApi = async (req, res) => {
 const createChatRoomApi = async (req, res) => {
   try {
     const { roomName, roomAvatar, roomDescription, participants, type } = req.body;
-    const chatRoom = await createChatRoom(roomName, roomAvatar, roomDescription, [...participants, req.user.id], type);
+    const userId = req.user.id;
+    const chatRoom = await createChatRoom(roomName, roomAvatar, roomDescription, [...participants, req.user.id], type, userId);
     return res.status(201).json(ApiResponse.success(chatRoom, "Chat room created"));
   } catch (error) {
     return res.status(500).json(ApiError.error("Failed to create chat room", error.message));

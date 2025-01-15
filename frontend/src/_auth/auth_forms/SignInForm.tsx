@@ -20,7 +20,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useSignInMutation } from "@/redux/api/authApi";
 import { useDispatch } from "react-redux";
 import { setAuthState } from "@/redux/slices/authSlice";
-import { getTokenFromCookies } from "@/utils/auth";
+import { getUserIdFromCookies } from "@/utils/auth";
 
 function SignInForm() {
   const [signIn, { isLoading, isSuccess, isError, error }] =
@@ -58,8 +58,8 @@ function SignInForm() {
   useEffect(() => {
     if (isSuccess) {
       toast.success("Logged in successfully");
-      const token = getTokenFromCookies();
-      dispatch(setAuthState({ isAuthenticated: true, token }));
+      const userId = getUserIdFromCookies();
+      dispatch(setAuthState({ isAuthenticated: true, userId }));
       navigate("/"); // Redirect to home page
     }
     if (isError) {

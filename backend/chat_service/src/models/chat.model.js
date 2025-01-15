@@ -27,10 +27,13 @@ const ChatSchema = mongoose.Schema(
       enum: ["sent", "delivered", "read"],
       default: "sent",
     },
-    attachments: {
-      type: [String], // Array of attachment URLs
-      default: [],
-    },
+    attachments: [
+      {
+        name: String,
+        type: String,
+        url: String,
+      },
+    ],
   },
   {
     timestamps: true, // Automatically manage createdAt and updatedAt fields

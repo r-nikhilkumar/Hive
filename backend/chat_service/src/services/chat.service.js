@@ -12,7 +12,11 @@ const createMessage = async (userId, chatRoomId, message, attachments = []) => {
     userId,
     chatRoomId,
     message,
-    attachments,
+    attachments: attachments.map((attachment) => ({
+      name: attachment.name,
+      type: attachment.type,
+      url: attachment.url,
+    })),
   });
   const savedMessage = await chatMessage.save();
 
@@ -54,7 +58,7 @@ const deleteMessage = async (messageId) => {
   return message;
 };
 
-const createChatRoom = async (roomName, roomAvatar, roomDescription, participants, type = "personal") => {
+const createChatRoom = async (roomName, roomAvatar, roomDescription, participants, type = "personal", userId) => {
   if (type === "personal") {
     const existingRoom = await ChatRoom.findOne({
       type: "personal",
@@ -63,46 +67,33 @@ const createChatRoom = async (roomName, roomAvatar, roomDescription, participant
     if (existingRoom) {
       return existingRoom;
     }
+    // Set roomName as the other participant's ID
+    const otherParticipant = participants.find(participant => participant.toString() !== userId);
+    roomName = otherParticipant;
   }
 
   const chatRoom = new ChatRoom({
-    roomName: type === "group" ? roomName : null,
-    roomAvatar: type === "group" ? roomAvatar : null,
-    roomDescription: type === "group" ? roomDescription : null,
+    roomName: roomName,
+    roomAvatar: roomAvatar,
+    roomDescription: roomDescription,
     participants,
     type,
   });
   const savedChatRoom = await chatRoom.save();
-
-  // Update cache
-  await cacheChatRoom(savedChatRoom);
+  await cacheChatRooms(userId, savedChatRoom);
 
   return savedChatRoom;
 };
 
 const getChatRooms = async (userId) => {
-  const cachedChatRooms = await getChatRoomsFromCache(userId);
-  if (cachedChatRooms) {
-    return cachedChatRooms;
-  }
+  // const cachedChatRooms = await getChatRoomsFromCache(userId);
+  // if (cachedChatRooms) {
+  //   return cachedChatRooms;
+  // }
 
   const chatRooms = await ChatRoom.find({ participants: userId }).sort({ createdAt: -1 });
-
-  // Enhance personal chat rooms with participant details
-  const enhancedChatRooms = chatRooms.map((chatRoom) => {
-    if (chatRoom.type === "personal") {
-      const otherParticipant = chatRoom.participants.find(
-        (participant) => participant.toString() !== userId
-      );
-      chatRoom.roomName = otherParticipant;
-      chatRoom.roomAvatar = null;
-      chatRoom.roomDescription = null;
-    }
-    return chatRoom;
-  });
-
-  await cacheChatRooms(userId, enhancedChatRooms);
-  return enhancedChatRooms;
+  await cacheChatRooms(userId, chatRooms);
+  return chatRooms;
 };
 
 const deleteChatRoom = async (chatRoomId) => {

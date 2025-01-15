@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 function ProfileViewLinear({user}) {
   return (
       <NavLink
-        to={`/chats/${user.id}`}
+        to={`/chats/${user._id}`}
         className="user"
       >
         <img
@@ -13,7 +13,7 @@ function ProfileViewLinear({user}) {
           width={25}
           height={25}
         />
-        <p className="name">{user.name}</p>
+        <p className="name">{user.roomName}</p>
       </NavLink>
   );
 }

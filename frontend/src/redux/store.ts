@@ -1,14 +1,19 @@
-import { configureStore } from '@reduxjs/toolkit';
-import authReducer from './slices/authSlice';
-import { authApi } from './api/authApi';
-import { setupListeners } from '@reduxjs/toolkit/query';
+import { configureStore } from "@reduxjs/toolkit";
+import authReducer from "./slices/authSlice";
+import { authApi } from "./api/authApi";
+import { setupListeners } from "@reduxjs/toolkit/query";
+import { chatApi } from "./api/chatApi";
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
     [authApi.reducerPath]: authApi.reducer,
+    [chatApi.reducerPath]: chatApi.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(authApi.middleware),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware()
+      .concat(authApi.middleware)
+      .concat(chatApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

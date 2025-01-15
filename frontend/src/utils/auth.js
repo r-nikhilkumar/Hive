@@ -4,7 +4,6 @@ const getCookie = (name) => {
     console.log("No cookies found");
     return null;
   }
-  console.log("All cookies: ", cookies); // Log all cookies
   const cookieArr = cookies.split("; "); // Split cookies into key-value pairs
   for (const cookie of cookieArr) {
     const [key, value] = cookie.split("=");
@@ -15,15 +14,15 @@ const getCookie = (name) => {
   return null;
 }
 
-export const getTokenFromCookies = () => {
-  const name = "token";
-  return getCookie(name)
+export const getUserIdFromCookies = () => {
+  const name = "userId";
+  const userId = getCookie(name);
+  // console.log("User ID from cookies: ", decodeURIComponent(userId));
+  if (userId) {
+    const cleanedUserId = userId.replace(/^j:"|"$|"/g, ''); // Remove j:" prefix and " suffix
+    // console.log("Cleaned user ID: ", cleanedUserId);
+    return decodeURIComponent(cleanedUserId); // Decode the user ID
+  }
+  return null;
 };
 
-// Get all cookies as a single string
-
-
-
-// Usage
-// const token = getCookie("token");
-// console.log("Token from cookie:", token);
