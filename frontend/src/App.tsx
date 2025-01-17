@@ -18,9 +18,12 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import "./globals.css";
 import Notifications from "./_root/pages/Notifications";
 import { useSignInMutation } from "./redux/api/authApi";
+import { connectSocket } from "./redux/api/chatApi";
+import { useSelector } from "react-redux";
 
 function App() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   // Listen for window resize changes
   useEffect(() => {
@@ -31,6 +34,12 @@ function App() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    if(isAuthenticated) {
+      connectSocket();
+    }
+  }, [ isAuthenticated ]);
 
   return (
     <main className="flex h-screen">

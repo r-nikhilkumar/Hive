@@ -11,8 +11,8 @@ import {
   sendMessage,
   receiveMessage,
   receiveMessageReceived,
-  cacheMessages,
-  getCachedMessages,
+  deleteMessage,
+  receiveMessageDeleted,
 } from "@/redux/api/chatApi";
 import { useSelector } from "react-redux";
 
@@ -28,9 +28,23 @@ function ChatScreen() {
   const audioChunksRef = useRef<Blob[]>([]);
   const chatAreaRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const currentUserId = useSelector((state)=> state.auth.userId);
+  const currentUserId = useSelector((state) => state.auth.userId);
+
+  const cacheMessages = (chatRoomId, messages) => {
+    localStorage.setItem(`chat_${chatRoomId}`, JSON.stringify(messages));
+  };
+
+  const getCachedMessages = (chatRoomId) => {
+    const cached = localStorage.getItem(`chat_${chatRoomId}`);
+    return cached ? JSON.parse(cached) : null;
+  };
 
   useEffect(() => {
+    const cachedMessages = getCachedMessages(chatRoomId);
+    if (cachedMessages) {
+      setMessages(cachedMessages);
+    }
+
     joinRoom(chatRoomId);
     receivePreviousMessages((messages) => {
       setMessages(messages);
@@ -52,11 +66,20 @@ function ChatScreen() {
       });
     });
 
+    // Add listener for messageDeleted event
+    receiveMessageDeleted(({ messageId }) => {
+      setMessages((prevMessages) => {
+        const updatedMessages = prevMessages.filter((msg) => msg._id !== messageId);
+        cacheMessages(chatRoomId, updatedMessages);
+        return updatedMessages;
+      });
+    });
+
     return () => {
       leaveRoom(chatRoomId);
       setMessages([]); // Clear messages when leaving the room
     };
-  }, [chatRoomId]);
+  }, [chatRoomId, receiveMessageDeleted]);
 
   const handleFileClick = () => {
     if (fileInputRef.current) {
@@ -96,6 +119,15 @@ function ChatScreen() {
       setNewMessage("");
       setIsTyping(false);
     }
+  };
+
+  const handleDeleteMessage = (messageId) => {
+    deleteMessage(messageId);
+    setMessages((prevMessages) => {
+      const updatedMessages = prevMessages.filter((msg) => msg._id !== messageId);
+      cacheMessages(chatRoomId, updatedMessages);
+      return updatedMessages;
+    });
   };
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -167,7 +199,6 @@ function ChatScreen() {
       }
     }
   };
-  
 
   return (
     <div className="chat-screen">
@@ -187,6 +218,7 @@ function ChatScreen() {
       <div className="chat-area" ref={chatAreaRef}>
         <div className="chat-messages">
           {messages?.map((msg) => {
+            console.log("Message:", msg);
             return (
               <MessageCard
                 key={msg._id}
@@ -196,6 +228,8 @@ function ChatScreen() {
                 timestamp={msg.timestamp}
                 status={msg.status}
                 profilePic={undefined}
+                name = {msg.user.name}
+                onDelete={() => handleDeleteMessage(msg._id)} // Add delete handler
               />
             );
           })}

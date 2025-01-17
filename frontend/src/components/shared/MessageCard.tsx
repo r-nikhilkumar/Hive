@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import SingleTick from "/assets/icons/single-tick.svg";
 import DoubleGrayTick from "/assets/icons/double-tick.svg";
 import DoubleBlueTick from "/assets/icons/double-tick-blue.svg";
 import { formatDistanceToNow } from "date-fns"; // Import for time ago formatting
+import { FiMoreVertical } from "react-icons/fi"; // Import for three-dot menu
 
-const MessageCard = ({ message, messageType, type, timestamp, status, profilePic }) => {
+const MessageCard = ({ message, messageType, type, timestamp, status, profilePic, onDelete, name }) => {
+  const [showMenu, setShowMenu] = useState(false);
+
   // Format the timestamp to show time ago
-  const timeAgo = formatDistanceToNow(new Date(timestamp), { addSuffix: true });
+  const timeAgo = timestamp ? formatDistanceToNow(new Date(Number(timestamp)), { addSuffix: true }) : "";
 
   const getStatusIcon = () => {
     if (status === "sent") return <img src={SingleTick} alt="Sent" className="tick-icon" height={16} width={16} />;
@@ -41,10 +44,22 @@ const MessageCard = ({ message, messageType, type, timestamp, status, profilePic
     <div className={`message-card ${type}`}>
       {type === "message-left" && <img src={profilePic ?? "/assets/icons/profile-placeholder.svg"} alt="Profile" className="profile-pic" />}
       <div className="message-content">
+        {type === "message-left" && <div className="user-name">{name}</div>}
         {renderMessageContent()}
         <div className="message-info">
           <span className="timestamp">{timeAgo}</span>
           {type === "message-right" && getStatusIcon()}
+          {type === "message-right" && (
+            <div className="message-options">
+              {showMenu && (
+                <div className="message-options_menu">
+                  <button className="delete-button" onClick={onDelete}>
+                    Delete
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
       {type === "message-right" && <img src={profilePic ?? "/assets/icons/profile-placeholder.svg"} alt="Profile" className="profile-pic" />}

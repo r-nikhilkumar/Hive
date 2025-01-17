@@ -5,8 +5,10 @@ const redisClient = require("../../../config/redis");
 const { getUserFromCache, cacheUser } = require("../redis/user.redis");
 
 const getUser = async (req, res) => {
+  console.log("Fetching user data");
   try {
     const userId = req.params.id;
+    console.log("back id: ", userId)
 
     let cachedUser;
 
@@ -17,6 +19,7 @@ const getUser = async (req, res) => {
     }
 
     if (cachedUser) {
+      console.log("User: ",cachedUser)
       return res
         .status(200)
         .json(ApiResponse.success(cachedUser, "User sent from cache"));
@@ -32,6 +35,7 @@ const getUser = async (req, res) => {
       } catch (cacheError) {
         console.error("Error caching user data: ", cacheError.message);
       }
+      console.log("User: ",user)
 
       return res.status(200).json(ApiResponse.success(user, "User sent"));
     }
