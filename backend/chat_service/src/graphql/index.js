@@ -20,6 +20,7 @@ const typeDefs = gql`
     chatRoomId: ID!
     userId: ID!
     message: String!
+    status: String!
     attachments: [String]
     createdAt: String!
     timestamp: String!
@@ -48,13 +49,17 @@ const resolvers = {
     getMessagesWithUser: async (_, { chatRoomId, token }) => {
       try {
         const messages = await getMessagesByChatRoom(chatRoomId);
+        console.log(messages)
 
         const userIds = [...new Set(messages.map(msg => msg.userId))];
-        const userPromises = userIds.map(userId => 
-          axios.get(`http://localhost:3000/users/get-user/${userId}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          })
-        );
+        console.log(userIds)
+        const userPromises = userIds
+          .filter(userId => userId) // Ensure userId is defined
+          .map(userId => 
+            axios.get(`http://localhost:3000/users/get-user/${userId}`, {
+              headers: { Authorization: `Bearer ${token}` }
+            })
+          );
 
         const users = await Promise.all(userPromises);
         const userMap = users.reduce((acc, userResponse) => {

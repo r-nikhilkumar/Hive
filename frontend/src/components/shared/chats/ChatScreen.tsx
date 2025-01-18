@@ -40,10 +40,10 @@ function ChatScreen() {
   };
 
   useEffect(() => {
-    const cachedMessages = getCachedMessages(chatRoomId);
-    if (cachedMessages) {
-      setMessages(cachedMessages);
-    }
+    // const cachedMessages = getCachedMessages(chatRoomId);
+    // if (cachedMessages) {
+    //   setMessages(cachedMessages);
+    // }
 
     joinRoom(chatRoomId);
     receivePreviousMessages((messages) => {

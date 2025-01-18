@@ -27,10 +27,10 @@ const createMessage = async (userId, chatRoomId, message, attachments = []) => {
 };
 
 const getMessagesByChatRoom = async (chatRoomId) => {
-  const cachedMessages = await getChatFromCache(chatRoomId);
-  if (cachedMessages) {
-    return cachedMessages;
-  }
+  // const cachedMessages = await getChatFromCache(chatRoomId);
+  // if (cachedMessages) {
+  //   return cachedMessages;
+  // }
 
   const messages = await Chat.find({ chatRoomId }).sort({ timestamp: 1 });
   if (messages.length) {

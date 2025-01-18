@@ -79,6 +79,7 @@ io.on("connection", (socket) => {
               chatRoomId
               userId
               message
+              status
               attachments
               createdAt
               timestamp
@@ -125,6 +126,7 @@ io.on("connection", (socket) => {
               chatRoomId
               userId
               message
+              status
               attachments
               createdAt
               timestamp
