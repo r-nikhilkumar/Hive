@@ -90,7 +90,6 @@ io.on("connection", (socket) => {
       const messagesWithUser = await apolloServer.executeOperation({
         query: GET_MESSAGES_WITH_USER,
         variables: { chatRoomId },
-        context: { userLoader: createUserLoader() },
       });
       // console.log("previousMessages", messagesWithUser.data.getMessagesWithUser)
       socket.emit(
@@ -112,7 +111,6 @@ io.on("connection", (socket) => {
           message,
           attachments,
         },
-        context: { userLoader: createUserLoader() },
       });
       // console.log(result.data.createMessage);
       io.to(chatRoomId).emit("message", result.data.createMessage);

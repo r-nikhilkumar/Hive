@@ -6,13 +6,7 @@ const createUserLoader = require("./dataloader");
 const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ req, connection }) => {
-    if (connection) {
-      return connection.context;
-    }
-
-    return { userLoader: createUserLoader() };
-  },
+  context: { userLoader: createUserLoader() },
   introspection: true,
   playground: true,
 });

@@ -20,7 +20,7 @@ const getUsers = async (userIds, userLoader) => {
 const getMessagesWithUser = async (chatRoomId, userLoader) => {
   const messages = await getMessages(chatRoomId);
 
-  const userIds = [...new Set(messages.map((msg) => msg.userId))];
+  const userIds = [...new Set(messages.map((msg) => msg.userId.toString()))];
   const users = await getUsers(userIds, userLoader);
 
   const userMap = users.reduce((acc, user) => {
@@ -45,11 +45,8 @@ const getChatRoomsWithUsers = async (userId, userLoader) => {
     const participantIds = chatRoom.participants.filter(
       (participantId) => participantId.toString() !== userId.toString()
     );
-
-    const participants = await getUsers(participantIds, userLoader);
-
-    // console.log("Participants fetched for chatRoom:", participants);
-    // console.log("ChatRoom before assignment:", chatRoom);
+    const uniqueParticipantsIds = [...new Set(participantIds.map((id) => id.toString()))];
+    const participants = await getUsers(uniqueParticipantsIds, userLoader);
 
     chatRooms[index] = {
       ...chatRoom._doc,
@@ -101,7 +98,7 @@ const resolvers = {
           attachments
         );
 
-        const user = await getUser(userId, userLoader);
+        const user = await getUser(userId.toString(), userLoader);
 
         return { ...savedMessage._doc, user: user || null };
       } catch (error) {

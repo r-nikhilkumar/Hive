@@ -4,9 +4,8 @@ const axios = require("axios");
 const createUserLoader = () =>
   new DataLoader(
     async (userIds) => {
-      const uniqueUserIds = [...new Set(userIds.map((id) => id.toString()))];
-    //   console.log(uniqueUserIds);
-      const userPromises = uniqueUserIds.map((userId) =>
+      // console.log(userIds)
+      const userPromises = userIds.map((userId) =>
         axios
           .get(`http://localhost:3000/users/get-user/${userId}`)
           .then((response) => response.data.data)
