@@ -1,9 +1,18 @@
 const Chat = require("../models/chat.model");
 const ChatRoom = require("../models/chatRoom.model");
-const { getChatFromCache, cacheChat, removeChatFromCache, deleteChatRoomFromCache, getChatRoomsFromCache, cacheChatRooms, cacheChatRoom, getChatRoomFromCache } = require("../redis/chat.redis");
+const {
+  getChatFromCache,
+  cacheChat,
+  removeChatFromCache,
+  deleteChatRoomFromCache,
+  getChatRoomsFromCache,
+  cacheChatRooms,
+  cacheChatRoom,
+  getChatRoomFromCache,
+} = require("../redis/chat.redis");
 
 const createMessage = async (userId, chatRoomId, message, attachments = []) => {
-  const chatRoom = await ChatRoom.findById(chatRoomId);
+  const chatRoom = await ChatRoom.findById(chatRoomId).lean();
   if (!chatRoom) {
     throw new Error("Chat room not found");
   }
@@ -58,18 +67,27 @@ const deleteMessage = async (messageId) => {
   return message;
 };
 
-const createChatRoom = async (roomName, roomAvatar, roomDescription, participants, type = "personal", userId) => {
+const createChatRoom = async (
+  roomName,
+  roomAvatar,
+  roomDescription,
+  participants,
+  type = "personal",
+  userId
+) => {
   if (type === "personal") {
     const existingRoom = await ChatRoom.findOne({
       type: "personal",
-      participants: { $all: participants, $size: participants.length }
+      participants: { $all: participants, $size: participants.length },
     });
     if (existingRoom) {
       return existingRoom;
     }
     // Set roomName as the other participant's ID
-    const otherParticipant = participants.find(participant => participant.toString() !== userId);
-    roomName = otherParticipant;
+    const otherParticipant = participants.find(
+      (participant) => participant.toString() !== userId
+    );
+    roomName = "";
   }
 
   const chatRoom = new ChatRoom({
@@ -91,7 +109,10 @@ const getChatRooms = async (userId) => {
   //   return cachedChatRooms;
   // }
 
-  const chatRooms = await ChatRoom.find({ participants: userId }).sort({ createdAt: -1 });
+  const chatRooms = await ChatRoom.find({ participants: userId }).sort({
+    createdAt: -1,
+  });
+  // I can use .lean() above to avoid _doc of mongoose
   await cacheChatRooms(userId, chatRooms);
   return chatRooms;
 };

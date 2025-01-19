@@ -58,7 +58,30 @@ const CREATE_MESSAGE = gql`
   }
 `;
 
+const GET_CHAT_ROOMS = gql`
+  query GetChatRooms($userId: ID!) {
+    getChatRooms(userId: $userId) {
+      _id
+      roomName
+      roomAvatar
+      roomDescription
+      participants {
+        _id
+        name
+        username
+        email
+        profilePic
+        bio
+      }
+      type
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 module.exports = {
   GET_MESSAGES_WITH_USER,
   CREATE_MESSAGE,
+  GET_CHAT_ROOMS,
 };

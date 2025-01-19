@@ -1,25 +1,17 @@
-const {
-  createMessage,
-  getMessagesByChatRoom,
-  deleteMessage,
-  createChatRoom,
-  getChatRooms,
-  deleteChatRoom,
-} = require("../services/chat.service");
+const { apolloServer, createUserLoader } = require("../graphql");
+const { GET_CHAT_ROOMS } = require("../graphql/queries");
 const ApiError = require("../utils/ApiError");
 const ApiResponse = require("../utils/ApiResponse");
 
 const getChatRoomsApi = async (req, res) => {
   try {
     const userId = req.user.id;
-    let token = req.headers.authorization ? req.headers.authorization.split(" ")[1] : null;
-    if (!token && req.cookies) {
-      token = req.cookies.token;
-    }
-    if (!token) {
-      return res.status(401).json(ApiError.error("Unauthorized", "Token not provided"));
-    }
-    const chatRooms = await getChatRooms(userId, token);
+    const result = await apolloServer.executeOperation({
+      query: GET_CHAT_ROOMS,
+      variables: { userId },
+      context: { userLoader: createUserLoader() },
+    });
+    const chatRooms = result.data.getChatRooms;
     return res.status(200).json(ApiResponse.success(chatRooms, "Chat rooms sent"));
   } catch (error) {
     return res.status(500).json(ApiError.error("Failed to fetch chat rooms", error.message));

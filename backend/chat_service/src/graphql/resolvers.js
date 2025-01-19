@@ -2,6 +2,7 @@ const axios = require("axios");
 const {
   getMessagesByChatRoom,
   createMessage,
+  getChatRooms,
 } = require("../services/chat.service");
 
 const getUser = async (userId, userLoader) => {
@@ -23,7 +24,9 @@ const getMessagesWithUser = async (chatRoomId, userLoader) => {
   const users = await getUsers(userIds, userLoader);
 
   const userMap = users.reduce((acc, user) => {
-    acc[user._id] = user;
+    if (user && user._id) {
+      acc[user._id] = user;
+    }
     return acc;
   }, {});
 
@@ -31,6 +34,38 @@ const getMessagesWithUser = async (chatRoomId, userLoader) => {
     ...msg._doc,
     user: userMap[msg.userId],
   }));
+};
+
+const getChatRoomsWithUsers = async (userId, userLoader) => {
+  const chatRooms = await getChatRooms(userId);
+
+  for (let index = 0; index < chatRooms.length; index++) {
+    const chatRoom = chatRooms[index];
+
+    const participantIds = chatRoom.participants.filter(
+      (participantId) => participantId.toString() !== userId.toString()
+    );
+
+    const participants = await getUsers(participantIds, userLoader);
+
+    // console.log("Participants fetched for chatRoom:", participants);
+    // console.log("ChatRoom before assignment:", chatRoom);
+
+    chatRooms[index] = {
+      ...chatRoom._doc,
+      participants: [...participants],
+      ...(chatRoom.type === "personal" && participants.length > 0
+        ? {
+            roomAvatar: participants[0]?.profilePic,
+            roomDescription: participants[0]?.bio,
+            roomName: participants[0]?.name
+          }
+        : {}),
+    };
+  }
+
+//   console.log("Updated chatRooms:", chatRooms);
+  return chatRooms;
 };
 
 const resolvers = {
@@ -43,15 +78,12 @@ const resolvers = {
         throw new Error("Failed to fetch messages with user info");
       }
     },
-    user: async (_, { id }) => {
+    getChatRooms: async (_, { userId }, { userLoader }) => {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/users/get-user/${id}`
-        );
-        return response.data.data;
+        return await getChatRoomsWithUsers(userId, userLoader);
       } catch (error) {
-        console.error("Error in user query:", error);
-        throw new Error("Failed to fetch user details");
+        console.error("Error in getChatRooms:", error);
+        throw new Error("Failed to fetch chat rooms with user info");
       }
     },
   },

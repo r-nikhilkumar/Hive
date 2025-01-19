@@ -18,7 +18,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import "./globals.css";
 import Notifications from "./_root/pages/Notifications";
 import { useSignInMutation } from "./redux/api/authApi";
-import { connectSocket } from "./redux/api/chatApi";
+import { connectSocket } from "./redux/api/socket";
 import { useSelector } from "react-redux";
 
 function App() {

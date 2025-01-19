@@ -5,7 +5,7 @@ import DoubleBlueTick from "/assets/icons/double-tick-blue.svg";
 import { formatDistanceToNow } from "date-fns"; // Import for time ago formatting
 import { FiMoreVertical } from "react-icons/fi"; // Import for three-dot menu
 
-const MessageCard = ({ message, messageType, type, timestamp, status, profilePic, onDelete, name }) => {
+const MessageCard = ({ message, messageType, type, timestamp, status, profilePic, onDelete, name, email, username, bio }) => {
   const [showMenu, setShowMenu] = useState(false);
 
   // Format the timestamp to show time ago

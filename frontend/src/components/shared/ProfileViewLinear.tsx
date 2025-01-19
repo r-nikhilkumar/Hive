@@ -1,19 +1,19 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 
-function ProfileViewLinear({user}) {
+function ProfileViewLinear({chatRoom}) {
   return (
       <NavLink
-        to={`/chats/${user._id}`}
+        to={`/chats/${chatRoom._id}`}
         className="user"
       >
         <img
-          src={"/assets/icons/profile-placeholder.svg"}
+          src={chatRoom.roomAvatar || "/assets/icons/profile-placeholder.svg"}
           alt="profile"
           width={25}
           height={25}
         />
-        <p className="name">{user.roomName}</p>
+        <p className="name">{chatRoom.roomName}</p>
       </NavLink>
   );
 }

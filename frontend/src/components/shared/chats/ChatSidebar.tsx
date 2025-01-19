@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import ProfileViewLinear from "../ProfileViewLinear";
 import { Input } from "@/components/ui";
-import { useGetChatRoomsQuery, initializeChatRoom } from "@/redux/api/chatApi";
+import { initializeChatRoom } from "@/redux/api/socket";
 import Loader from "../Loader";
+import { useGetChatRoomsQuery } from "@/redux/api/chatApi";
 
 function ChatSidebar() {
   const [searchValue, setSearchValue] = useState("");
 
   // Correctly call the useGetChatRoomsQuery hook
-  const { data: chatRooms, error, isLoading, isSuccess, isError } = useGetChatRoomsQuery(null);
+  const { data: chatRooms, error, isLoading, isSuccess, isError } = useGetChatRoomsQuery();
 
   useEffect(() => {
     if (isSuccess && chatRooms?.data.length > 0) {
@@ -42,7 +43,7 @@ function ChatSidebar() {
       {isError && <div>Error loading chat rooms</div>}
       {isSuccess && chatRooms?.data.length > 0 ? (
         chatRooms.data.map((chatRoom) => (
-          <ProfileViewLinear key={chatRoom._id} user={chatRoom} />
+          <ProfileViewLinear key={chatRoom._id} chatRoom={chatRoom} />
         ))
       ) : (
         <div className="text-center">No chat rooms available</div>

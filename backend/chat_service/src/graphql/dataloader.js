@@ -5,7 +5,7 @@ const createUserLoader = () =>
   new DataLoader(
     async (userIds) => {
       const uniqueUserIds = [...new Set(userIds.map((id) => id.toString()))];
-      // console.log(uniqueUserIds);
+    //   console.log(uniqueUserIds);
       const userPromises = uniqueUserIds.map((userId) =>
         axios
           .get(`http://localhost:3000/users/get-user/${userId}`)
@@ -24,7 +24,9 @@ const createUserLoader = () =>
         return acc;
       }, {});
 
-      return userIds.map((userId) => userMap[userId] || null);
+      const returnUser = userIds.map((userId) => userMap[userId] || null);
+    //   console.log(returnUser)
+      return returnUser
     },
     { cache: true, batch: true }
   );

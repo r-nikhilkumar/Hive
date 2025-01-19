@@ -13,8 +13,9 @@ import {
   receiveMessageReceived,
   deleteMessage,
   receiveMessageDeleted,
-} from "@/redux/api/chatApi";
+} from "@/redux/api/socket";
 import { useSelector } from "react-redux";
+import { useGetChatRoomsQuery } from "@/redux/api/chatApi";
 
 function ChatScreen() {
   const { id: chatRoomId } = useParams();
@@ -29,6 +30,8 @@ function ChatScreen() {
   const chatAreaRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const currentUserId = useSelector((state) => state.auth.userId);
+  const { data: chatRooms, isSuccess } = useGetChatRoomsQuery();
+  const chatRoom = isSuccess ? chatRooms.data.find(room => room._id === chatRoomId) : null;
 
   const cacheMessages = (chatRoomId, messages) => {
     localStorage.setItem(`chat_${chatRoomId}`, JSON.stringify(messages));
@@ -203,22 +206,26 @@ function ChatScreen() {
   return (
     <div className="chat-screen">
       <div className="chat-header">
-        <img
-          src="/assets/icons/profile-placeholder.svg"
-          alt="User Avatar"
-          className="chat-header_avatar"
-        />
-        <div className="chat-header_info">
-          <h2 className="chat-header_name">{chatRoomId}</h2>
-          <p className="chat-header_status">Online</p>
-        </div>
+        {chatRoom && (
+          <>
+            <img
+              src={chatRoom.roomAvatar || "/assets/icons/profile-placeholder.svg"}
+              alt="User Avatar"
+              className="chat-header_avatar"
+            />
+            <div className="chat-header_info">
+              <h2 className="chat-header_name">{chatRoom.roomName}</h2>
+              <p className="chat-header_status">Online</p>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Chat Area */}
       <div className="chat-area" ref={chatAreaRef}>
         <div className="chat-messages">
           {messages?.map((msg) => {
-            console.log("Message:", msg);
+            // console.log("Message:", msg);
             return (
               <MessageCard
                 key={msg._id}
@@ -227,9 +234,12 @@ function ChatScreen() {
                 type={msg.userId === currentUserId ? "message-right" : "message-left"}
                 timestamp={msg.timestamp}
                 status={msg.status}
-                profilePic={undefined}
-                name = {msg.user.name}
+                profilePic={msg.user.profilePic}
                 onDelete={() => handleDeleteMessage(msg._id)} // Add delete handler
+                name = {msg.user.name}
+                email={msg.user.email}
+                username={msg.user.username}
+                bio={msg.user.bio}
               />
             );
           })}

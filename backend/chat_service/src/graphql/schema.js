@@ -10,6 +10,17 @@ const typeDefs = gql`
     bio: String
   }
 
+  type ChatRoom {
+    _id: ID!
+    roomName: String!
+    roomAvatar: String
+    roomDescription: String
+    participants: [User]
+    type: String!
+    createdAt: String!
+    updatedAt: String!
+  }
+
   type Message {
     _id: ID!
     chatRoomId: ID!
@@ -25,7 +36,7 @@ const typeDefs = gql`
 
   type Query {
     getMessagesWithUser(chatRoomId: ID!): [Message]
-    user(id: ID!): User
+    getChatRooms(userId: ID!): [ChatRoom]
   }
 
   type Mutation {
