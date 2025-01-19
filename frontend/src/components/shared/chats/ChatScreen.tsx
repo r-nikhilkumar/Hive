@@ -133,12 +133,12 @@ function ChatScreen() {
     });
   };
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 468);
 
   // Listen for window resize changes
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
+      setIsMobile(window.innerWidth <= 468);
     };
 
     window.addEventListener("resize", handleResize);
