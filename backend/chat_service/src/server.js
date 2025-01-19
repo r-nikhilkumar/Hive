@@ -10,8 +10,8 @@ const chatRoute = require("./routes/chat.route");
 const connectDB = require("./config/db");
 const { getUserFromToken } = require("./config/jwt");
 const { deleteMessage } = require("./services/chat.service");
-const { gql } = require("apollo-server-express");
-const apolloServer = require("./graphql");
+const { apolloServer, createUserLoader } = require("./graphql");
+const { GET_MESSAGES_WITH_USER, CREATE_MESSAGE } = require("./graphql/queries");
 
 dotenv.config();
 
@@ -72,30 +72,9 @@ io.on("connection", (socket) => {
 
     try {
       const messagesWithUser = await apolloServer.executeOperation({
-        query: gql`
-          query GetMessagesWithUser($chatRoomId: ID!, $token: String!) {
-            getMessagesWithUser(chatRoomId: $chatRoomId, token: $token) {
-              _id
-              chatRoomId
-              userId
-              message
-              status
-              attachments
-              createdAt
-              timestamp
-              updatedAt
-              user {
-                _id
-                name
-                username
-                email
-                profilePic
-                bio
-              }
-            }
-          }
-        `,
-        variables: { chatRoomId, token: socket.token },
+        query: GET_MESSAGES_WITH_USER,
+        variables: { chatRoomId },
+        context: { userLoader: createUserLoader() },
       });
       // console.log("previousMessages", messagesWithUser.data.getMessagesWithUser)
       socket.emit("previousMessages", messagesWithUser.data.getMessagesWithUser);
@@ -107,48 +86,14 @@ io.on("connection", (socket) => {
   socket.on("message", async ({ chatRoomId, message, attachments }) => {
     try {
       const result = await apolloServer.executeOperation({
-        query: gql`
-          mutation CreateMessage(
-            $chatRoomId: ID!
-            $userId: ID!
-            $message: String!
-            $attachments: [String]
-            $token: String!
-          ) {
-            createMessage(
-              chatRoomId: $chatRoomId
-              userId: $userId
-              message: $message
-              attachments: $attachments
-              token: $token
-            ) {
-              _id
-              chatRoomId
-              userId
-              message
-              status
-              attachments
-              createdAt
-              timestamp
-              updatedAt
-              user {
-                _id
-                name
-                username
-                email
-                profilePic
-                bio
-              }
-            }
-          }
-        `,
+        query: CREATE_MESSAGE,
         variables: {
           chatRoomId,
           userId: socket.user.id,
           message,
           attachments,
-          token: socket.token,
         },
+        context: { userLoader: createUserLoader() },
       });
       // console.log(result.data.createMessage);
       io.to(chatRoomId).emit("message", result.data.createMessage);
