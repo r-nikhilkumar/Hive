@@ -18,7 +18,14 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: ["http://localhost:5173", "http://localhost:4000", "https://studio.apollographql.com"], credentials: true },
+  cors: {
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:4000",
+      "https://studio.apollographql.com",
+    ],
+    credentials: true,
+  },
 });
 
 // Redis setup
@@ -33,7 +40,16 @@ io.adapter(createAdapter(pubClient, subClient));
 
 const PORT = process.env.CHAT_PORT || 3003;
 
-app.use(cors({ origin: ["http://localhost:5173", "http://localhost:4000", "https://studio.apollographql.com"], credentials: true }));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:4000",
+      "https://studio.apollographql.com",
+    ],
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 connectDB();
@@ -41,7 +57,7 @@ app.use("/", chatRoute);
 
 async function startApolloServer() {
   await apolloServer.start();
-  apolloServer.applyMiddleware({ app, path: '/graphql' });
+  apolloServer.applyMiddleware({ app, path: "/graphql" });
 }
 
 startApolloServer();
@@ -77,7 +93,10 @@ io.on("connection", (socket) => {
         context: { userLoader: createUserLoader() },
       });
       // console.log("previousMessages", messagesWithUser.data.getMessagesWithUser)
-      socket.emit("previousMessages", messagesWithUser.data.getMessagesWithUser);
+      socket.emit(
+        "previousMessages",
+        messagesWithUser.data.getMessagesWithUser
+      );
     } catch (error) {
       console.error("Error fetching messages with user info:", error);
     }
@@ -113,10 +132,14 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     for (const chatRoomId in activeUsers) {
-      activeUsers[chatRoomId] = activeUsers[chatRoomId].filter((id) => id !== socket.id);
+      activeUsers[chatRoomId] = activeUsers[chatRoomId].filter(
+        (id) => id !== socket.id
+      );
       io.to(chatRoomId).emit("activeUsers", activeUsers[chatRoomId]);
     }
   });
 });
 
-server.listen(PORT, () => console.log(`Chat service listening on port ${PORT}`));
+server.listen(PORT, () =>
+  console.log(`Chat service listening on port ${PORT}`)
+);

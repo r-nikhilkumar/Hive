@@ -19,7 +19,7 @@ const getUsers = async (userIds, userLoader) => {
 const getMessagesWithUser = async (chatRoomId, userLoader) => {
   const messages = await getMessages(chatRoomId);
 
-  const userIds = [...new Set(messages.map(msg => msg.userId))];
+  const userIds = [...new Set(messages.map((msg) => msg.userId))];
   const users = await getUsers(userIds, userLoader);
 
   const userMap = users.reduce((acc, user) => {
@@ -27,9 +27,9 @@ const getMessagesWithUser = async (chatRoomId, userLoader) => {
     return acc;
   }, {});
 
-  return messages.map(msg => ({
+  return messages.map((msg) => ({
     ...msg._doc,
-    user: userMap[msg.userId]
+    user: userMap[msg.userId],
   }));
 };
 
@@ -45,7 +45,9 @@ const resolvers = {
     },
     user: async (_, { id }) => {
       try {
-        const response = await axios.get(`http://localhost:3000/users/get-user/${id}`);
+        const response = await axios.get(
+          `http://localhost:3000/users/get-user/${id}`
+        );
         return response.data.data;
       } catch (error) {
         console.error("Error in user query:", error);
@@ -54,7 +56,11 @@ const resolvers = {
     },
   },
   Mutation: {
-    createMessage: async (_, { chatRoomId, userId, message, attachments }, { userLoader }) => {
+    createMessage: async (
+      _,
+      { chatRoomId, userId, message, attachments },
+      { userLoader }
+    ) => {
       try {
         const savedMessage = await createMessage(
           userId,
