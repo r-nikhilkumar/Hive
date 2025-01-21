@@ -36,10 +36,10 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if(isAuthenticated) {
+    if (isAuthenticated) {
       connectSocket();
     }
-  }, [ isAuthenticated ]);
+  }, [isAuthenticated]);
 
   return (
     <main className="flex h-screen">

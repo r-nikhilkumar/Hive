@@ -15,9 +15,7 @@ import {
   receiveMessageDeleted,
 } from "@/redux/api/socket";
 import { useSelector } from "react-redux";
-import {
-  useGetChatRoomsQuery,
-} from "@/redux/api/chatApi";
+import { useGetChatRoomsQuery } from "@/redux/api/chatApi";
 import { useUploadFilesMutation } from "@/redux/api/commonApi";
 import { Message } from "@/types"; // Import the Message type
 
