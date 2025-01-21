@@ -8,7 +8,11 @@ const GET_MESSAGES_WITH_USER = gql`
       userId
       message
       status
-      attachments
+      attachments {
+        name
+        url
+        type
+      }
       createdAt
       timestamp
       updatedAt
@@ -29,7 +33,7 @@ const CREATE_MESSAGE = gql`
     $chatRoomId: ID!
     $userId: ID!
     $message: String!
-    $attachments: [String]
+    $attachments: [AttachmentInput]
   ) {
     createMessage(
       chatRoomId: $chatRoomId
@@ -42,7 +46,11 @@ const CREATE_MESSAGE = gql`
       userId
       message
       status
-      attachments
+      attachments {
+        name
+        url
+        type
+      }
       createdAt
       timestamp
       updatedAt

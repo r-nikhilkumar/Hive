@@ -15,7 +15,11 @@ import {
   receiveMessageDeleted,
 } from "@/redux/api/socket";
 import { useSelector } from "react-redux";
-import { useGetChatRoomsQuery } from "@/redux/api/chatApi";
+import {
+  useGetChatRoomsQuery,
+} from "@/redux/api/chatApi";
+import { useUploadFilesMutation } from "@/redux/api/commonApi";
+import { Message } from "@/types"; // Import the Message type
 
 function ChatScreen() {
   const { id: chatRoomId } = useParams();
@@ -23,7 +27,7 @@ function ChatScreen() {
   const [isRecording, setIsRecording] = useState(false);
   const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
   const [audioMessages, setAudioMessages] = useState<string[]>([]);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const recorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -31,7 +35,10 @@ function ChatScreen() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const currentUserId = useSelector((state) => state.auth.userId);
   const { data: chatRooms, isSuccess } = useGetChatRoomsQuery();
-  const chatRoom = isSuccess ? chatRooms.data.find(room => room._id === chatRoomId) : null;
+  const chatRoom = isSuccess
+    ? chatRooms.data.find((room) => room._id === chatRoomId)
+    : null;
+  const [uploadFiles] = useUploadFilesMutation();
 
   const cacheMessages = (chatRoomId, messages) => {
     localStorage.setItem(`chat_${chatRoomId}`, JSON.stringify(messages));
@@ -43,11 +50,6 @@ function ChatScreen() {
   };
 
   useEffect(() => {
-    // const cachedMessages = getCachedMessages(chatRoomId);
-    // if (cachedMessages) {
-    //   setMessages(cachedMessages);
-    // }
-
     joinRoom(chatRoomId);
     receivePreviousMessages((messages) => {
       setMessages(messages);
@@ -61,7 +63,6 @@ function ChatScreen() {
       });
     });
     receiveMessageReceived((message) => {
-      console.log("Message received:", message);
       setMessages((prevMessages) => {
         const updatedMessages = [...prevMessages, message];
         cacheMessages(chatRoomId, updatedMessages);
@@ -69,10 +70,11 @@ function ChatScreen() {
       });
     });
 
-    // Add listener for messageDeleted event
     receiveMessageDeleted(({ messageId }) => {
       setMessages((prevMessages) => {
-        const updatedMessages = prevMessages.filter((msg) => msg._id !== messageId);
+        const updatedMessages = prevMessages.filter(
+          (msg) => msg._id !== messageId
+        );
         cacheMessages(chatRoomId, updatedMessages);
         return updatedMessages;
       });
@@ -80,7 +82,7 @@ function ChatScreen() {
 
     return () => {
       leaveRoom(chatRoomId);
-      setMessages([]); // Clear messages when leaving the room
+      setMessages([]);
     };
   }, [chatRoomId, receiveMessageDeleted]);
 
@@ -90,18 +92,61 @@ function ChatScreen() {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files;
     if (selectedFiles) {
-      const attachments = Array.from(selectedFiles).map((file) => ({
+      const formData = new FormData();
+      Array.from(selectedFiles).forEach((file) => {
+        formData.append("files", file);
+      });
+
+      const tempMessageId = `temp-${Date.now()}`;
+      const tempAttachments = Array.from(selectedFiles).map((file) => ({
         name: file.name,
         type: file.type,
-        size: file.size,
         url: URL.createObjectURL(file),
       }));
-      sendMessage(chatRoomId, newMessage, attachments);
-      setNewMessage("");
-      setIsTyping(false);
+
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          _id: tempMessageId,
+          userId: currentUserId,
+          message: "",
+          attachments: tempAttachments,
+          status: "uploading",
+          timestamp: Date.now(),
+          user: {
+            _id: currentUserId,
+            name: "You",
+            profilePic: "", // Add current user's profile pic if available
+          },
+        },
+      ]);
+
+      try {
+        const response = await uploadFiles(formData).unwrap();
+        console.log("Uploaded files:", response);
+
+        const attachments = response.data.map((file) => ({
+          name: file.name,
+          type: file.type,
+          url: file.url,
+        }));
+
+        console.log("Attachments:", attachments);
+
+        sendMessage(chatRoomId, newMessage, attachments);
+        setNewMessage("");
+        setIsTyping(false);
+
+        // Remove the temporary message
+        setMessages((prevMessages) =>
+          prevMessages.filter((msg) => msg._id !== tempMessageId)
+        );
+      } catch (error) {
+        console.error("Error uploading files:", error);
+      }
     }
   };
 
@@ -118,6 +163,7 @@ function ChatScreen() {
 
   const handleSendMessage = () => {
     if (newMessage.trim() !== "") {
+      console.log("Sending message:", newMessage);
       sendMessage(chatRoomId, newMessage);
       setNewMessage("");
       setIsTyping(false);
@@ -127,7 +173,9 @@ function ChatScreen() {
   const handleDeleteMessage = (messageId) => {
     deleteMessage(messageId);
     setMessages((prevMessages) => {
-      const updatedMessages = prevMessages.filter((msg) => msg._id !== messageId);
+      const updatedMessages = prevMessages.filter(
+        (msg) => msg._id !== messageId
+      );
       cacheMessages(chatRoomId, updatedMessages);
       return updatedMessages;
     });
@@ -135,7 +183,6 @@ function ChatScreen() {
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 468);
 
-  // Listen for window resize changes
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 468);
@@ -146,10 +193,55 @@ function ChatScreen() {
   }, []);
 
   const recorderControls = useAudioRecorder();
-  const addAudioElement = (blob) => {
-    const url = URL.createObjectURL(blob);
-    setAudioMessages((prev) => [...prev, url]);
-    sendMessage(chatRoomId, "", [{ name: "audio", type: "audio/mpeg", url }]);
+  const addAudioElement = async (blob) => {
+    const formData = new FormData();
+    formData.append("files", blob, "audioMessage.mp3");
+    console.log(blob);
+
+    const tempMessageId = `temp-${Date.now()}`;
+    const tempAttachment = {
+      name: "audioMessage.mp3",
+      type: "audio/mpeg",
+      url: URL.createObjectURL(blob),
+    };
+
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      {
+        _id: tempMessageId,
+        userId: currentUserId,
+        message: "",
+        attachments: [tempAttachment],
+        status: "uploading",
+        timestamp: Date.now(),
+        user: {
+          _id: currentUserId,
+          name: "You",
+          profilePic: "", // Add current user's profile pic if available
+        },
+      },
+    ]);
+
+    try {
+      const response = await uploadFiles(formData).unwrap();
+      // console.log("Uploaded audio:", response);
+      const audioAttachment = response.data[0];
+      console.log("Audio attachment:", audioAttachment);
+
+      setMessages((prevMessages) =>
+        prevMessages.filter((msg) => msg._id !== tempMessageId)
+      );
+
+      sendMessage(chatRoomId, "", [
+        {
+          name: audioAttachment.name,
+          type: audioAttachment.type,
+          url: audioAttachment.url,
+        },
+      ]);
+    } catch (error) {
+      console.error("Error uploading audio:", error);
+    }
   };
 
   const startRecording = async () => {
@@ -159,20 +251,17 @@ function ChatScreen() {
       recorderRef.current = recorder;
 
       recorder.ondataavailable = (e) => {
-        audioChunksRef.current.push(e.data);
+        if (e.data.size > 0) {
+          audioChunksRef.current.push(e.data);
+        }
       };
 
       recorder.onstop = () => {
         const audioBlob = new Blob(audioChunksRef.current, {
           type: "audio/mpeg",
         });
-        const audioURL = URL.createObjectURL(audioBlob);
-        setAudioMessages((prev) => [...prev, audioURL]);
-        setRecordedAudio(audioBlob);
-        sendMessage(chatRoomId, "", [
-          { name: "audio", type: "audio/mpeg", url: audioURL },
-        ]);
-        audioChunksRef.current = []; // Clear chunks for the next recording
+        addAudioElement(audioBlob);
+        audioChunksRef.current = [];
       };
 
       recorder.start();
@@ -189,7 +278,6 @@ function ChatScreen() {
     }
   };
 
-  // Handle Enter key for sending messages
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (isMobile) {
       if (e.key === "Enter" && !e.shiftKey) {
@@ -209,7 +297,9 @@ function ChatScreen() {
         {chatRoom && (
           <>
             <img
-              src={chatRoom.roomAvatar || "/assets/icons/profile-placeholder.svg"}
+              src={
+                chatRoom.roomAvatar || "/assets/icons/profile-placeholder.svg"
+              }
               alt="User Avatar"
               className="chat-header_avatar"
             />
@@ -221,32 +311,46 @@ function ChatScreen() {
         )}
       </div>
 
-      {/* Chat Area */}
       <div className="chat-area" ref={chatAreaRef}>
         <div className="chat-messages">
           {messages?.map((msg) => {
             // console.log("Message:", msg);
+            const messageType = msg.attachments.length
+              ? msg.attachments[0].type.startsWith("image/")
+                ? "photo"
+                : msg.attachments[0].type.startsWith("video/")
+                ? "video"
+                : msg.attachments[0].type.startsWith("audio/")
+                ? "voice"
+                : "attachment"
+              : "text";
             return (
               <MessageCard
                 key={msg._id}
-                message={msg.message}
-                messageType={msg.attachments.length ? "photo" : "text"} // Change this logic as per your message type
-                type={msg.userId === currentUserId ? "message-right" : "message-left"}
+                message={
+                  msg.attachments?.length ? msg.attachments : msg.message
+                }
+                messageType={messageType}
+                type={
+                  msg.userId === currentUserId
+                    ? "message-right"
+                    : "message-left"
+                }
                 timestamp={msg.timestamp}
                 status={msg.status}
                 profilePic={msg.user.profilePic}
-                onDelete={() => handleDeleteMessage(msg._id)} // Add delete handler
-                name = {msg.user.name}
+                onDelete={() => handleDeleteMessage(msg._id)}
+                name={msg.user.name}
                 email={msg.user.email}
                 username={msg.user.username}
                 bio={msg.user.bio}
+                isUploading={msg.status === "uploading"}
               />
             );
           })}
         </div>
       </div>
 
-      {/* Typing Input */}
       <div className="chat-input">
         {isTyping && (
           <div className="chat-typing">
@@ -264,7 +368,7 @@ function ChatScreen() {
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*,video/*"
+          accept="image/*,video/*,audio/*"
           multiple
           onChange={handleFileChange}
           style={{ display: "none" }}
@@ -277,7 +381,7 @@ function ChatScreen() {
             className="chat-input_field"
             value={newMessage}
             onChange={handleTyping}
-            onKeyDown={handleKeyDown} // Add keydown event listener
+            onKeyDown={handleKeyDown}
           />
         )}
         <AudioRecorder

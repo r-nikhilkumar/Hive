@@ -3,17 +3,20 @@ import authReducer from "./slices/authSlice";
 import { authApi } from "./api/authApi";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { chatApi } from "./api/chatApi";
+import { commonApi } from "./api/commonApi";
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
     [authApi.reducerPath]: authApi.reducer,
     [chatApi.reducerPath]: chatApi.reducer,
+    [commonApi.reducerPath]: commonApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(authApi.middleware)
-      .concat(chatApi.middleware),
+      .concat(chatApi.middleware)
+      .concat(commonApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

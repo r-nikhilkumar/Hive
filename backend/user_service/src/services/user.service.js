@@ -6,11 +6,11 @@ const getUserById = async (id) => {
 };
 
 const getUserByUsername = async (username) => {
-    return await User.findOne({username});
-}
+  return await User.findOne({ username });
+};
 const getUserByEmail = async (email) => {
-    return await User.findOne({email});
-}
+  return await User.findOne({ email });
+};
 
 const createUser = async (userDetails) => {
   try {
@@ -33,4 +33,10 @@ const passwordVerify = async (currentpassword, realPassword) => {
   }
 };
 
-module.exports = { createUser, getUserByEmail, getUserById, getUserByUsername, passwordVerify };
+module.exports = {
+  createUser,
+  getUserByEmail,
+  getUserById,
+  getUserByUsername,
+  passwordVerify,
+};

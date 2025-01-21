@@ -10,7 +10,7 @@ const chatRoute = require("./routes/chat.route");
 const connectDB = require("./config/db");
 const { getUserFromToken } = require("./config/jwt");
 const { deleteMessage } = require("./services/chat.service");
-const { apolloServer, createUserLoader } = require("./graphql");
+const { apolloServer } = require("./graphql");
 const { GET_MESSAGES_WITH_USER, CREATE_MESSAGE } = require("./graphql/queries");
 
 dotenv.config();
@@ -94,7 +94,7 @@ io.on("connection", (socket) => {
       // console.log("previousMessages", messagesWithUser.data.getMessagesWithUser)
       socket.emit(
         "previousMessages",
-        messagesWithUser.data.getMessagesWithUser
+        messagesWithUser.data?.getMessagesWithUser
       );
     } catch (error) {
       console.error("Error fetching messages with user info:", error);
@@ -112,8 +112,7 @@ io.on("connection", (socket) => {
           attachments,
         },
       });
-      // console.log(result.data.createMessage);
-      io.to(chatRoomId).emit("message", result.data.createMessage);
+      io.to(chatRoomId).emit("message", result.data?.createMessage);
     } catch (error) {
       console.error("Error creating message with user info:", error);
     }

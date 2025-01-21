@@ -4,13 +4,12 @@ const axios = require("axios");
 const createUserLoader = () =>
   new DataLoader(
     async (userIds) => {
-      // console.log(userIds)
       const userPromises = userIds.map((userId) =>
         axios
           .get(`http://localhost:3000/users/get-user/${userId}`)
           .then((response) => response.data.data)
           .catch((error) => {
-            console.error(`Failed to fetch user with ID ${userId}:`, error);
+            // console.error(`Failed to fetch user with ID ${userId}:`, error);
             return null;
           })
       );
@@ -24,8 +23,8 @@ const createUserLoader = () =>
       }, {});
 
       const returnUser = userIds.map((userId) => userMap[userId] || null);
-    //   console.log(returnUser)
-      return returnUser
+      //   console.log(returnUser)
+      return returnUser;
     },
     { cache: true, batch: true }
   );

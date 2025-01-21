@@ -1,5 +1,11 @@
 const mongoose = require("mongoose");
 
+const AttachmentSchema = mongoose.Schema({
+  name: { type: String, required: true },
+  type: { type: String, required: true },
+  url: { type: String, required: true },
+});
+
 const ChatSchema = mongoose.Schema(
   {
     userId: {
@@ -27,25 +33,20 @@ const ChatSchema = mongoose.Schema(
       enum: ["sent", "delivered", "read"],
       default: "sent",
     },
-    attachments: [
-      {
-        name: String,
-        type: String,
-        url: String,
+    attachments: {
+      type: [AttachmentSchema],
+      default: [],
+      validate: {
+        validator: function (v) {
+          return this.message || (v && v.length > 0);
+        },
+        message: "Either message or attachments must be provided.",
       },
-    ],
+    },
   },
   {
     timestamps: true, // Automatically manage createdAt and updatedAt fields
   }
 );
-
-// Custom validation to ensure at least one of message or attachments is provided
-ChatSchema.pre('save', function(next) {
-  if (!this.message && this.attachments.length === 0) {
-    return next(new Error('Either message or attachments must be provided.'));
-  }
-  next();
-});
 
 module.exports = mongoose.model("Chat", ChatSchema);

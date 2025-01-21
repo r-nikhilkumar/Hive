@@ -45,7 +45,9 @@ const getChatRoomsWithUsers = async (userId, userLoader) => {
     const participantIds = chatRoom.participants.filter(
       (participantId) => participantId.toString() !== userId.toString()
     );
-    const uniqueParticipantsIds = [...new Set(participantIds.map((id) => id.toString()))];
+    const uniqueParticipantsIds = [
+      ...new Set(participantIds.map((id) => id.toString())),
+    ];
     const participants = await getUsers(uniqueParticipantsIds, userLoader);
 
     chatRooms[index] = {
@@ -55,13 +57,12 @@ const getChatRoomsWithUsers = async (userId, userLoader) => {
         ? {
             roomAvatar: participants[0]?.profilePic,
             roomDescription: participants[0]?.bio,
-            roomName: participants[0]?.name
+            roomName: participants[0]?.name,
           }
         : {}),
     };
   }
 
-//   console.log("Updated chatRooms:", chatRooms);
   return chatRooms;
 };
 
@@ -71,7 +72,6 @@ const resolvers = {
       try {
         return await getMessagesWithUser(chatRoomId, userLoader);
       } catch (error) {
-        console.error("Error in getMessagesWithUser:", error);
         throw new Error("Failed to fetch messages with user info");
       }
     },
@@ -79,7 +79,6 @@ const resolvers = {
       try {
         return await getChatRoomsWithUsers(userId, userLoader);
       } catch (error) {
-        console.error("Error in getChatRooms:", error);
         throw new Error("Failed to fetch chat rooms with user info");
       }
     },
@@ -87,7 +86,7 @@ const resolvers = {
   Mutation: {
     createMessage: async (
       _,
-      { chatRoomId, userId, message, attachments },
+      { chatRoomId, userId, message, attachments = [] },
       { userLoader }
     ) => {
       try {
@@ -102,7 +101,6 @@ const resolvers = {
 
         return { ...savedMessage._doc, user: user || null };
       } catch (error) {
-        console.error("Error in createMessage:", error);
         throw new Error("Failed to create message with user info");
       }
     },

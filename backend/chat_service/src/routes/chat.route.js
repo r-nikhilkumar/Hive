@@ -6,7 +6,10 @@ const {
   createMessageApi,
   deleteMessageApi,
   deleteChatRoomApi,
+  uploadFilesApi,
 } = require("../controllers/chat.controller");
+const multer = require("multer");
+const upload = multer({ dest: "chat_service/temp/upload/" });
 
 const route = require("express").Router();
 
@@ -18,5 +21,6 @@ route.get("/rooms/:id/messages", getMessagesByChatRoomApi);
 route.post("/messages", createMessageApi);
 route.delete("/messages/:id", deleteMessageApi);
 route.delete("/rooms/:id", deleteChatRoomApi);
+
 
 module.exports = route;

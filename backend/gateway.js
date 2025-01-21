@@ -6,6 +6,9 @@ const http = require("http");
 const { Server } = require("socket.io");
 const { createAdapter } = require("@socket.io/redis-adapter");
 const { createClient } = require("redis");
+const { uploadFilesApi } = require("./srcCommon/controllerCommon/uploadFilesApi");
+const multer = require("multer");
+const upload = multer({ dest: "./temp/upload/" });
 
 dotenv.config();
 
@@ -39,6 +42,9 @@ app.use(
 app.get("/", (req, res) => {
   return res.send({ message: "Welcome to the gateway!" });
 });
+
+app.post("/upload", upload.array("files"), uploadFilesApi);
+
 
 // Proxy HTTP requests to microservices
 app.use(

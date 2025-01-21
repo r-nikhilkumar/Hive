@@ -12,7 +12,8 @@ const {
 } = require("../redis/chat.redis");
 
 const createMessage = async (userId, chatRoomId, message, attachments = []) => {
-  const chatRoom = await ChatRoom.findById(chatRoomId).lean();
+  // console.log("Creating message:", { userId, chatRoomId, message, attachments });
+  const chatRoom = await ChatRoom.findById(chatRoomId);
   if (!chatRoom) {
     throw new Error("Chat room not found");
   }
@@ -21,17 +22,14 @@ const createMessage = async (userId, chatRoomId, message, attachments = []) => {
     userId,
     chatRoomId,
     message,
-    attachments: attachments.map((attachment) => ({
-      name: attachment.name,
-      type: attachment.type,
-      url: attachment.url,
-    })),
+    attachments,
   });
   const savedMessage = await chatMessage.save();
 
   // Update cache
   await cacheChat(chatRoomId, savedMessage);
 
+  // console.log("Message created:", savedMessage);
   return savedMessage;
 };
 

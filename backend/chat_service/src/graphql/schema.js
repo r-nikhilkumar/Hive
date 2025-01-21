@@ -10,6 +10,18 @@ const typeDefs = gql`
     bio: String
   }
 
+  type Attachment {
+    name: String
+    url: String
+    type: String
+  }
+
+  input AttachmentInput {
+    name: String
+    url: String
+    type: String
+  }
+
   type ChatRoom {
     _id: ID!
     roomName: String!
@@ -27,7 +39,7 @@ const typeDefs = gql`
     userId: ID!
     message: String!
     status: String!
-    attachments: [String]
+    attachments: [Attachment]
     createdAt: String!
     timestamp: String!
     updatedAt: String!
@@ -44,7 +56,7 @@ const typeDefs = gql`
       chatRoomId: ID!
       userId: ID!
       message: String!
-      attachments: [String]
+      attachments: [AttachmentInput]
     ): Message
   }
 `;
