@@ -73,6 +73,7 @@ const createChatRoom = async (
   type = "personal",
   userId
 ) => {
+  console.log("Creating chat room:", { roomName, roomAvatar, roomDescription, participants, type, userId });
   if (type === "personal") {
     const existingRoom = await ChatRoom.findOne({
       type: "personal",
@@ -116,14 +117,14 @@ const getChatRooms = async (userId) => {
 };
 
 const deleteChatRoom = async (chatRoomId) => {
-  const chatRoom = await ChatRoom.findById(chatRoomId);
+  const chatRoom = await ChatRoom.findById(chatRoomId); // Ensure it's a Mongoose document
   if (!chatRoom) {
     throw new Error("Chat room not found");
   }
 
   await Chat.deleteMany({ chatRoomId });
   await deleteChatRoomFromCache(chatRoomId); // Remove from cache
-  await chatRoom.remove();
+  await ChatRoom.findByIdAndDelete(chatRoomId);
 
   return chatRoom;
 };

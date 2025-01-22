@@ -119,7 +119,7 @@ function ChatScreen() {
             name: "You",
             profilePic: "", // Add current user's profile pic if available
           },
-        },
+        } as Message, // Ensure the temporary message conforms to the Message type
       ]);
 
       try {
@@ -191,7 +191,7 @@ function ChatScreen() {
   }, []);
 
   const recorderControls = useAudioRecorder();
-  const addAudioElement = async (blob) => {
+  const addAudioElement = async (blob: Blob) => {
     const formData = new FormData();
     formData.append("files", blob, "audioMessage.mp3");
     console.log(blob);
@@ -215,9 +215,9 @@ function ChatScreen() {
         user: {
           _id: currentUserId,
           name: "You",
-          profilePic: "", // Add current user's profile pic if available
+          profilePic: "",
         },
-      },
+      } as Message, // Ensure the temporary message conforms to the Message type
     ]);
 
     try {

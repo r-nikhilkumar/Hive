@@ -1,4 +1,4 @@
-const { getUserById } = require("../services/user.service");
+const { getUserById, getAllUsers } = require("../services/user.service"); // Import getAllUsers service
 const ApiError = require("../utils/ApiError");
 const ApiResponse = require("../utils/ApiResponse");
 const redisClient = require("../../../config/redis");
@@ -47,4 +47,15 @@ const getUser = async (req, res) => {
   }
 };
 
-module.exports = { getUser };
+const getAllUsersController = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const users = await getAllUsers(userId);
+    return res.status(200).json(ApiResponse.success(users, "Users fetched successfully"));
+  } catch (error) {
+    console.error("Error fetching users: ", error.message);
+    return res.status(500).json(ApiError.error("Failed to fetch users", error.message));
+  }
+};
+
+module.exports = { getUser, getAllUsersController };

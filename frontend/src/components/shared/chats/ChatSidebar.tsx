@@ -3,27 +3,49 @@ import ProfileViewLinear from "../ProfileViewLinear";
 import { Input } from "@/components/ui";
 import { initializeChatRoom } from "@/redux/api/socket";
 import Loader from "../Loader";
-import { useGetChatRoomsQuery } from "@/redux/api/chatApi";
+import { useDeleteChatRoomMutation, useGetChatRoomsQuery } from "@/redux/api/chatApi"; // Import the deleteChatRoom function
+import OverlayScreen from "./OverlayScreen"; // Import the OverlayScreen component
+import deleteIcon from "/assets/icons/delete.svg"; // Import the delete icon
 
 function ChatSidebar() {
   const [searchValue, setSearchValue] = useState("");
+  const [isOverlayOpen, setIsOverlayOpen] = useState(false); // State to manage overlay visibility
 
-  // Correctly call the useGetChatRoomsQuery hook
-  const { data: chatRooms, error, isLoading, isSuccess, isError } = useGetChatRoomsQuery();
+  // Fetch chat rooms
+  const {
+    data: chatRooms,
+    error,
+    isLoading,
+    isSuccess,
+    isError,
+  } = useGetChatRoomsQuery();
 
+  const [ deleteChatRoom ] = useDeleteChatRoomMutation(); // Import the deleteChatRoom mutation
+
+  // Initialize chat rooms on successful fetch
   useEffect(() => {
     if (isSuccess && chatRooms?.data.length > 0) {
-      chatRooms.data.forEach(chatRoom => {
+      chatRooms.data.forEach((chatRoom) => {
         initializeChatRoom(chatRoom._id);
       });
     }
   }, [isSuccess, chatRooms]);
 
+  // Filter chat rooms based on search input
   const filteredChatRooms = useMemo(() => {
-    return chatRooms?.data.filter(chatRoom =>
+    return chatRooms?.data.filter((chatRoom) =>
       chatRoom.roomName.toLowerCase().includes(searchValue.toLowerCase())
     );
   }, [searchValue, chatRooms]);
+
+  // Function to handle chat room deletion
+  const handleDeleteChatRoom = (chatRoomId) => {
+    try {
+      deleteChatRoom(chatRoomId)
+    } catch (error) {
+      console.error("Error deleting chat room: ", error);
+    }
+  };
 
   return (
     <div className="chatsidebar">
@@ -45,14 +67,35 @@ function ChatSidebar() {
           }}
         />
       </div>
-      {isLoading && <Loader/>}
-      {isError && <div>Error loading chat rooms</div>}
-      {isSuccess && filteredChatRooms.length > 0 ? (
-        filteredChatRooms.map((chatRoom) => (
-          <ProfileViewLinear key={chatRoom._id} chatRoom={chatRoom} />
-        ))
-      ) : (
-        <div className="text-center">No chat rooms available</div>
+
+      <div className="floating-button" onClick={() => setIsOverlayOpen(true)}>
+        Add New Chats
+      </div>
+
+      <div className="chatRoomContainer">
+        {/* Render chat rooms or loader/error */}
+        {isLoading && <Loader />}
+        {isError && <div>Error loading chat rooms</div>}
+        {isSuccess && filteredChatRooms.length > 0 ? (
+          filteredChatRooms.map((chatRoom) => (
+            <div key={chatRoom._id} className="flex items-center gap-2">
+              <ProfileViewLinear chatRoom={chatRoom} />
+              <img
+                src={deleteIcon}
+                alt="Delete"
+                className="cursor-pointer"
+                onClick={() => handleDeleteChatRoom(chatRoom._id)}
+              />
+            </div>
+          ))
+        ) : (
+          <div className="text-center">No chat rooms available</div>
+        )}
+      </div>
+
+      {/* Overlay Screen */}
+      {isOverlayOpen && (
+        <OverlayScreen onClose={() => setIsOverlayOpen(false)} />
       )}
     </div>
   );

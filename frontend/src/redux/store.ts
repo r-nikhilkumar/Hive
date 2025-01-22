@@ -4,6 +4,7 @@ import { authApi } from "./api/authApi";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { chatApi } from "./api/chatApi";
 import { commonApi } from "./api/commonApi";
+import { userApi } from "./api/userApi";
 
 const store = configureStore({
   reducer: {
@@ -11,12 +12,14 @@ const store = configureStore({
     [authApi.reducerPath]: authApi.reducer,
     [chatApi.reducerPath]: chatApi.reducer,
     [commonApi.reducerPath]: commonApi.reducer,
+    [userApi.reducerPath]: userApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(authApi.middleware)
       .concat(chatApi.middleware)
-      .concat(commonApi.middleware),
+      .concat(commonApi.middleware)
+      .concat(userApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

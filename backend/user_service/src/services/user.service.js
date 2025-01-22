@@ -12,6 +12,10 @@ const getUserByEmail = async (email) => {
   return await User.findOne({ email });
 };
 
+const getAllUsers = async (userId) => {
+  return await User.find({ _id: { $ne: userId }}).select("-password -__v -refreshToken");
+};
+
 const createUser = async (userDetails) => {
   try {
     const password = await bcrypt.hash(userDetails.password, 8);
@@ -39,4 +43,5 @@ module.exports = {
   getUserById,
   getUserByUsername,
   passwordVerify,
+  getAllUsers,
 };

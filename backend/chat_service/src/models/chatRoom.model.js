@@ -9,11 +9,11 @@ const ChatRoomSchema = mongoose.Schema(
     },
     roomAvatar: {
       type: String,
-      required: function() { return this.type === "group"; }, // Only required for group chats
+      required: false, // Only required for group chats
     },
     roomDescription: {
       type: String,
-      required: function() { return this.type === "group"; }, // Only required for group chats
+      required: false, // Only required for group chats
     },
     participants: [
       {

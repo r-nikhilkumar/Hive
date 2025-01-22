@@ -6,9 +6,11 @@ export const chatApi = createApi({
     baseUrl: "http://localhost:3000/chats",
     credentials: "include",
   }),
+  tagTypes: ["Chat"],
   endpoints: (builder) => ({
     getChatRooms: builder.query({
       query: () => "/rooms",
+      providesTags: ["Chat"],
     }),
     getMessagesByChatRoom: builder.query({
       query: (chatRoomId) => `/rooms/${chatRoomId}/messages`,
@@ -32,12 +34,14 @@ export const chatApi = createApi({
         method: "POST",
         body: chatRoomData,
       }),
+      invalidatesTags: ["Chat"],
     }),
     deleteChatRoom: builder.mutation({
       query: (chatRoomId) => ({
         url: `/rooms/${chatRoomId}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Chat"],
     }),
   }),
 });
