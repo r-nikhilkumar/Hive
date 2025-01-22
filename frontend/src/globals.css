@@ -415,6 +415,21 @@
     height: 5vmin; /* Even smaller size for small phones */
   }
 
+  .post-card_media-container {
+    width: 100%;
+    height: 300px; /* Adjust the height as needed */
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .post-card_media {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+  }
+
   
   /* For screens below 768px (mobile devices) */
   @media (max-width: 768px) {

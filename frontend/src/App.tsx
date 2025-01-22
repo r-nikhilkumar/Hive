@@ -20,6 +20,7 @@ import Notifications from "./_root/pages/Notifications";
 import { useSignInMutation } from "./redux/api/authApi";
 import { connectSocket } from "./redux/api/socket";
 import { useSelector } from "react-redux";
+import { useGetUserByIdQuery, useGetUserDetailsQuery } from "./redux/api/userApi"; // Import the user details query
 
 function App() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -40,6 +41,8 @@ function App() {
       connectSocket();
     }
   }, [isAuthenticated]);
+
+  // if (isUserLoading) return <div className="flex justify-center items-center h-screen"><Loader/></div>; // Show loader while fetching user details
 
   return (
     <main className="flex h-screen">

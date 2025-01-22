@@ -41,9 +41,41 @@ export const postApi = createApi({
       }),
       invalidatesTags: ["Post"],
     }),
+    toggleLike: builder.mutation({
+      query: ({postId, userId}) => ({
+        url: `/toggle-like/${postId}`,
+        method: "POST",
+      }),
+      invalidatesTags: ["Post"],
+      onQueryStarted: async ({postId, userId}, { dispatch, queryFulfilled }) => {
+        const patchResult = dispatch(
+          postApi.util.updateQueryData('getPosts', undefined, (draft) => {
+            const post = draft.data.find((post) => post._id === postId);
+            if (post) {
+              post.likesCount += post.likes.likes.some((like) => like.userId === userId) ? -1 : 1;
+              post.likes.likes = post.likes.likes.some((like) => like.userId === userId)
+                ? post.likes.likes.filter((like) => like.userId !== userId)
+                : [...post.likes.likes, { userId }];
+            }
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch {
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
 
 // ...existing code...
 
-export const { useGetPostsQuery, useCreatePostMutation, useGetPostByIdQuery, useUpdatePostMutation, useDeletePostMutation } = postApi;
+export const {
+  useGetPostsQuery,
+  useCreatePostMutation,
+  useGetPostByIdQuery,
+  useUpdatePostMutation,
+  useDeletePostMutation,
+  useToggleLikeMutation,
+} = postApi;

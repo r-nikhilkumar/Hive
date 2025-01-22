@@ -4,20 +4,20 @@ import { useLocation } from "react-router-dom";
 
 import { checkIsLiked } from "@/lib/utils";
 import Overlay from "./Overlay";
+import { useToggleLikeMutation } from "@/redux/api/postApi";
 
-const PostStats = ({ post, userId }: PostStatsProps) => {
+const PostStats = ({ post, userId }) => {
   const location = useLocation();
-  const [liked, setLiked] = useState(false)
-  const [numberLikes, setNumberLikes] = useState(500)
-  const [isOverlayVisible, setOverlayVisible] = useState(true)
-  
+  const [toggleLike] = useToggleLikeMutation();
+  const isLiked = post.likes.likes.some((like) => like.userId === userId);
+  const likesCount = post.likesCount;
+  const [isOverlayVisible, setOverlayVisible] = useState(true);
 
-  const handleLikePost = (
+  const handleLikePost = async (
     e: React.MouseEvent<HTMLImageElement, MouseEvent>
   ) => {
     e.stopPropagation();
-    setLiked(!liked)
-    setNumberLikes(numberLikes+(!liked?1:-1))
+    toggleLike({ postId: post._id, userId });
   };
 
   const handleSavePost = (
@@ -36,7 +36,7 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
       <div className="flex gap-2 mr-5">
         <img
           src={`${
-            liked
+            isLiked
               ? "/assets/icons/liked.svg"
               : "/assets/icons/like.svg"
           }`}
@@ -46,7 +46,7 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
           onClick={(e) => handleLikePost(e)}
           className="cursor-pointer"
         />
-        <p className="small-medium lg:base-medium">{numberLikes}</p>
+        <p className="small-medium lg:base-medium">{likesCount}</p>
         <img
           src="/assets/icons/comment.svg"
           alt="comment"
@@ -57,7 +57,7 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
             setOverlayVisible(true)}}
           className="cursor-pointer"
         />
-        <p className="small-medium lg:base-medium">{0}</p>
+        <p className="small-medium lg:base-medium">{post.commentsCount}</p>
         <img
           src="/assets/icons/share.svg"
           alt="share"

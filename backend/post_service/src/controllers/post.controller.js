@@ -66,7 +66,6 @@ const getPostApi = async (req, res) => {
 
 const getPostsApi = async (req, res) => {
   try {
-    const userId = req.user.id;
     const result = await apolloServer.executeOperation({
       query: GET_POSTS_WITH_USER,
       context: { userLoader: createUserLoader() },
