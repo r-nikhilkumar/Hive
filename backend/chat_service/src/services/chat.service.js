@@ -73,7 +73,7 @@ const createChatRoom = async (
   type = "personal",
   userId
 ) => {
-  console.log("Creating chat room:", { roomName, roomAvatar, roomDescription, participants, type, userId });
+  // console.log("Creating chat room:", { roomName, roomAvatar, roomDescription, participants, type, userId });
   if (type === "personal") {
     const existingRoom = await ChatRoom.findOne({
       type: "personal",
