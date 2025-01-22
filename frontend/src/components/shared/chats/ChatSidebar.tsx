@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ProfileViewLinear from "../ProfileViewLinear";
 import { Input } from "@/components/ui";
 import { initializeChatRoom } from "@/redux/api/socket";
@@ -18,6 +18,12 @@ function ChatSidebar() {
       });
     }
   }, [isSuccess, chatRooms]);
+
+  const filteredChatRooms = useMemo(() => {
+    return chatRooms?.data.filter(chatRoom =>
+      chatRoom.roomName.toLowerCase().includes(searchValue.toLowerCase())
+    );
+  }, [searchValue, chatRooms]);
 
   return (
     <div className="chatsidebar">
@@ -41,8 +47,8 @@ function ChatSidebar() {
       </div>
       {isLoading && <Loader/>}
       {isError && <div>Error loading chat rooms</div>}
-      {isSuccess && chatRooms?.data.length > 0 ? (
-        chatRooms.data.map((chatRoom) => (
+      {isSuccess && filteredChatRooms.length > 0 ? (
+        filteredChatRooms.map((chatRoom) => (
           <ProfileViewLinear key={chatRoom._id} chatRoom={chatRoom} />
         ))
       ) : (
