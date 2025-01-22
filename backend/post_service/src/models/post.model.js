@@ -5,10 +5,6 @@ const PostSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true,
     },
-    title: {
-        type: String,
-        required: true,
-    },
     description: {
         type: String,
         required: true,
@@ -41,7 +37,7 @@ const PostSchema = mongoose.Schema({
     },
     comments: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Comment", // Reference to a single Comment document
+        ref: "Comment",
         default: null,
     },
     commentsCount: {
@@ -50,12 +46,20 @@ const PostSchema = mongoose.Schema({
     },
     likes: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Like", // Reference to a single Like document
+        ref: "Like",
         default: null,
     },
     likesCount: {
         type: Number,
         default: 0,
+    },
+    tags: {
+        type: [String],
+        default: [],
+    },
+    location: {
+        type: String,
+        default: "",
     },
 });
 

@@ -5,8 +5,8 @@ const Like = require("../models/likes.model");
 const getPostById = async (id) => {
   const post = await Post.findById(id)
     .select("-__v")
-    .populate({ path: "comments", select: "-postId -_id -__v" })
-    .populate({ path: "likes", select: "-postId -_id -__v" })
+    .populate({ path: "comments", select: "-postId -_id -__v", options: { lean: true } })
+    .populate({ path: "likes", select: "-postId -_id -__v", options: { lean: true } })
     .select("-postId");
   if (!post) {
     throw new Error("Post not found");
@@ -17,8 +17,9 @@ const getPostById = async (id) => {
 const getPosts = async () => {
   const posts = await Post.find()
     .select("-__v")
-    .populate({ path: "comments", select: "-postId -_id -__v" })
-    .populate({ path: "likes", select: "-postId -_id -__v" });
+    .populate({ path: "comments", select: "-postId -_id -__v", options: { lean: true } }).lean()
+    .populate({ path: "likes", select: "-postId -_id -__v", options: { lean: true } }).lean();
+    // console.log("service: ",posts.likes);
   return posts;
 };
 

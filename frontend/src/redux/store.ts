@@ -5,6 +5,7 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 import { chatApi } from "./api/chatApi";
 import { commonApi } from "./api/commonApi";
 import { userApi } from "./api/userApi";
+import { postApi } from "./api/postApi";
 
 const store = configureStore({
   reducer: {
@@ -13,13 +14,15 @@ const store = configureStore({
     [chatApi.reducerPath]: chatApi.reducer,
     [commonApi.reducerPath]: commonApi.reducer,
     [userApi.reducerPath]: userApi.reducer,
+    [postApi.reducerPath]: postApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(authApi.middleware)
       .concat(chatApi.middleware)
       .concat(commonApi.middleware)
-      .concat(userApi.middleware),
+      .concat(userApi.middleware)
+      .concat(postApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

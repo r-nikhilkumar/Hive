@@ -1,3 +1,5 @@
+const { apolloServer, createUserLoader } = require("../graphql");
+const { GET_POSTS_WITH_USER } = require("../graphql/queries");
 const { getPostFromCache, cachePost } = require("../redis/post.redis");
 const {
   getPostById,
@@ -64,7 +66,21 @@ const getPostApi = async (req, res) => {
 
 const getPostsApi = async (req, res) => {
   try {
-    const posts = await getPosts();
+    const userId = req.user.id;
+    const result = await apolloServer.executeOperation({
+      query: GET_POSTS_WITH_USER,
+      context: { userLoader: createUserLoader() },
+    });
+
+    if (result.errors) {
+      throw new Error(result.errors[0].message);
+    }
+
+    const posts = result.data?.getPostsWithUser;
+    if (!posts) {
+      throw new Error("No posts found");
+    }
+    // const posts = await getPosts();
     return res.status(200).json(ApiResponse.success(posts, "Posts sent"));
   } catch (error) {
     return res

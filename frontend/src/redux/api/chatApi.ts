@@ -1,9 +1,10 @@
+import { BASE_URL } from "@/constants";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const chatApi = createApi({
   reducerPath: "chatApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000/chats",
+    baseUrl: `${BASE_URL}/chats`,
     credentials: "include",
   }),
   tagTypes: ["Chat"],
