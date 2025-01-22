@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 
 import { Input } from "@/components/ui";
 import { GridPostList, Loader } from "@/components/shared";
+import { useGetPostsQuery } from "@/redux/api/postApi";
+import { useSelector } from "react-redux";
+import { useGetUserByIdQuery } from "@/redux/api/userApi";
 
 export type SearchResultProps = {
   isSearchFetching: boolean;
@@ -26,86 +29,15 @@ const Explore = () => {
   // const { data: posts, fetchNextPage, hasNextPage } = useGetPosts();
 
   const [searchValue, setSearchValue] = useState("");
-
-  const postsDetails = [
-    {
-      id:1,
-      creator: {
-        id :1,
-        name:"user1"
-      },
-      tags:["tag1", "tag2"],
-      location:"india",
-      caption:"hey there it's my post"
-    },
-    {
-      id:2,
-      creator: {
-        id :2,
-        name:"user2"
-      },
-      tags:["tag1", "tag2"],
-      location:"india",
-      caption:"hey there it's my post"
-    },
-    {
-      id:3,
-      creator: {
-        id :3,
-        name:"user3"
-      },
-      tags:["tag1", "tag2"],
-      location:"india",
-      caption:"hey there it's my post"
-    },
-  ]
-  const userDetails = [
-    {
-      id: 1,
-      name: "User1",
-      username: "username1",
-    },
-    {
-      id: 2,
-      name: "User2",
-      username: "username2",
-    },
-    {
-      id: 3,
-      name: "User3",
-      username: "username3",
-    },
-    {
-      id: 4,
-      name: "User4",
-      username: "username4",
-    },
-    {
-      id: 5,
-      name: "User5",
-      username: "username5",
-    },
-  ];
-
-  // const debouncedSearch = useDebounce(searchValue, 500);
-  // const { data: searchedPosts, isFetching: isSearchFetching } = useSearchPosts(debouncedSearch);
-
-  // useEffect(() => {
-  //   if (inView && !searchValue) {
-  //     fetchNextPage();
-  //   }
-  // }, [inView, searchValue]);
-
-  // if (!posts)
-  //   return (
-  //     <div className="flex-center w-full h-full">
-  //       <Loader />
-  //     </div>
-  //   );
-
-  // const shouldShowSearchResults = searchValue !== "";
-  // const shouldShowPosts = !shouldShowSearchResults && 
-  //   posts.pages.every((item) => item.documents.length === 0);
+  const {
+    data: postsDetails,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+  } = useGetPostsQuery();
+  const userId = useSelector((state) => state.auth.userId);
+  const { data: userDetails, isSuccess:isUserDetailsSuccess, isLoading: isUserDetailsLoading} = useGetUserByIdQuery(userId, {skip: !userId});
 
   return (
     <div className="explore-container">
@@ -146,7 +78,7 @@ const Explore = () => {
       </div>
 
       <div className="flex flex-wrap gap-9 w-full max-w-5xl">       
-        <GridPostList posts={postsDetails}  user={userDetails}/>
+        {isSuccess && isUserDetailsSuccess && <GridPostList posts={postsDetails?.data}  user={userDetails?.data}/>}
       </div>
     </div>
   );
