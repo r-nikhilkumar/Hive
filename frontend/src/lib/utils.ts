@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { formatDistanceToNow } from "date-fns";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -56,3 +57,9 @@ export const multiFormatDateString = (timestamp: string = ""): string => {
 export const checkIsLiked = (likeList: string[], userId: string) => {
   return likeList.includes(userId);
 };
+
+export const dateFormated = (date: string) => {
+  return formatDistanceToNow(new Date(Number(date)), { addSuffix: true });
+};
+
+

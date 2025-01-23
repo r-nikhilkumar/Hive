@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { multiFormatDateString } from "@/lib/utils";
+import { dateFormated } from "@/lib/utils";
 import PostStats from "./PostStats";
 import { Button, Input } from "@/components/ui";
 import { useState } from "react";
@@ -16,7 +16,7 @@ const PostCard = ({ post, user, userDetails }) => {
 
   function handleOnEnter(text) {
     setText("");
-    toggleComment({ postId: post._id, comment:{ comment:text } });
+    toggleComment({ postId: post._id, comment:{ comment:text }, userDetails });
   }
 
   return (
@@ -35,7 +35,7 @@ const PostCard = ({ post, user, userDetails }) => {
             <p className="base-medium lg:body-bold text-light-1">{user.name}</p>
             <div className="flex-center gap-2 text-light-3">
               <p className="subtle-semibold lg:small-regular ">
-                {multiFormatDateString(post.date)}
+                {dateFormated(post.date)}
               </p>
               •
               <p className="subtle-semibold lg:small-regular">
@@ -122,7 +122,7 @@ const PostCard = ({ post, user, userDetails }) => {
       )}
 
       {userDetails ? <>
-        <PostStats post={post} userId={userDetails?._id} />
+        <PostStats post={post} userDetails={userDetails} />
         <div className="post-out-comment">
           <Link to={`/u/${user._id}`}>
             <img

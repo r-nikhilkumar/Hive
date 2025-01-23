@@ -68,15 +68,24 @@ export const postApi = createApi({
       },
     }),
     toggleComment: builder.mutation({
-      query: ({ postId, comment }) => ({
+      query: ({ postId, comment, userDetails }) => ({
         url: `/toggle-comment/${postId}`,
         method: "POST",
         body: {...comment},
       }),
       invalidatesTags: ["Post"],
-      onQueryStarted: async ({ postId, comment }, { dispatch, queryFulfilled }) => {
+      onQueryStarted: async ({ postId, comment, userDetails }, { dispatch, queryFulfilled }) => {
         const tempId = nanoid();
-        const tempComment = { ...comment, _id: tempId };
+        const tempComment = {
+          ...comment,
+          _id: tempId,
+          user: {
+            _id: userDetails._id,
+            username: userDetails.username,
+            profilePic: userDetails.profilePic || "/assets/icons/profile-placeholder.svg",
+          },
+          date: new Date().getTime().toString(),
+        };
         const patchResult = dispatch(
           postApi.util.updateQueryData('getPosts', undefined, (draft) => {
             const post = draft.data.find((post) => post._id === postId);

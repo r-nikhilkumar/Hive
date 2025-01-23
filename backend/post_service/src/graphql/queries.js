@@ -8,6 +8,7 @@ const GET_POSTS_WITH_USER = gql`
       description
       location
       tags
+      date
       content
       content_type
       comments {

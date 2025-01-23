@@ -39,6 +39,7 @@ const typeDefs = gql`
     description: String!
     location: String
     tags: [String]
+    date: String!
     content: [String]
     content_type: String
     comments: Comment
