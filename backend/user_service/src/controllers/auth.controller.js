@@ -67,30 +67,31 @@ const login = async (req, res) => {
     const token = generateToken(user);
     const refreshToken = generateRefreshToken(user);
     user.refreshToken = refreshToken;
+    // console.log(process.env.NODE_ENV);
     await user.save();
     res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Lax",
+      // httpOnly: true,
+      secure: true,
+      sameSite: 'None',
       maxAge: 60 * 60 * 1000, // 1 hour
-      domain: process.env.COOKIE_DOMAIN || "localhost", // Ensure this matches your frontend domain
-      path: "/", // Available across the entire domain
+      // domain: 'process.env.COOKIE_DOMAIN' || "localhost", // Ensure this matches your frontend domain
+      // path: "/", // Available across the entire domain
     });
     res.cookie("userId", user._id, {
-      httpOnly: false,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Lax",
+      // httpOnly: false,
+      secure: true,
+      sameSite: 'None',
       maxAge: 60 * 60 * 1000, // 1 hour
-      domain: process.env.COOKIE_DOMAIN || "localhost", // Ensure this matches your frontend domain
-      path: "/", // Available across the entire domain
+      // domain: process.env.COOKIE_DOMAIN || "localhost", // Ensure this matches your frontend domain
+      // path: "/", // Available across the entire domain
     });
     res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Lax",
+      // httpOnly: true,
+      secure: true,
+      sameSite: 'None',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      domain: process.env.COOKIE_DOMAIN || "localhost", // Ensure this matches your frontend domain
-      path: "/", // Available across the entire domain
+      // domain: process.env.COOKIE_DOMAIN || "localhost", // Ensure this matches your frontend domain
+      // path: "/", // Available across the entire domain
     });
     return res
       .status(200)
