@@ -6,15 +6,17 @@ import { useState } from "react";
 import SendMessage from "./SendMessage";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { useToggleCommentMutation } from "@/redux/api/postApi";
 
 const PostCard = ({ post, user, userDetails }) => {
   // console.log("user", userDetails);
   if (!post.user) return;
   const [text, setText] = useState("");
+  const [toggleComment] = useToggleCommentMutation();
 
   function handleOnEnter(text) {
     setText("");
-    console.log("enter", text);
+    toggleComment({ postId: post._id, comment:{ comment:text } });
   }
 
   return (

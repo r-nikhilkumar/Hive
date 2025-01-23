@@ -1,5 +1,6 @@
 import { BASE_URL } from "@/constants";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { nanoid } from 'nanoid';
 
 // ...existing code...
 
@@ -66,6 +67,41 @@ export const postApi = createApi({
         }
       },
     }),
+    toggleComment: builder.mutation({
+      query: ({ postId, comment }) => ({
+        url: `/toggle-comment/${postId}`,
+        method: "POST",
+        body: {...comment},
+      }),
+      invalidatesTags: ["Post"],
+      onQueryStarted: async ({ postId, comment }, { dispatch, queryFulfilled }) => {
+        const tempId = nanoid();
+        const tempComment = { ...comment, _id: tempId };
+        const patchResult = dispatch(
+          postApi.util.updateQueryData('getPosts', undefined, (draft) => {
+            const post = draft.data.find((post) => post._id === postId);
+            if (post) {
+              post.comments.comments = [...post.comments.comments, tempComment];
+            }
+          })
+        );
+        try {
+          const { data: updatedComment } = await queryFulfilled;
+          dispatch(
+            postApi.util.updateQueryData('getPosts', undefined, (draft) => {
+              const post = draft.data.find((post) => post._id === postId);
+              if (post) {
+                post.comments.comments = post.comments.comments.map((cmt) =>
+                  cmt._id === tempId ? updatedComment : cmt
+                );
+              }
+            })
+          );
+        } catch {
+          patchResult.undo();
+        }
+      },
+    }),
   }),
 });
 
@@ -78,4 +114,5 @@ export const {
   useUpdatePostMutation,
   useDeletePostMutation,
   useToggleLikeMutation,
+  useToggleCommentMutation,
 } = postApi;
