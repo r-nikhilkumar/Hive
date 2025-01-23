@@ -107,7 +107,7 @@ const LeftSidebar = () => {
         <Button
           variant="ghost"
           className="shad-button_ghost"
-          onClick={(e) => setIsCollapsed(!isCollapsed)}
+          onClick={() => setIsCollapsed(!isCollapsed)}
         >
           <img
             src={`/assets/icons/${

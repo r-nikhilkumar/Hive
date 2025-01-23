@@ -1,7 +1,6 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
 
-function ProfileViewLinear({chatRoom}) {
+function ProfileViewLinear({chatRoom}:{chatRoom:any}) {
   return (
       <NavLink
         to={`/chats/${chatRoom._id}`}

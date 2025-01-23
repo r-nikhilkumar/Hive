@@ -1,31 +1,31 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button, Input } from "@/components/ui";
 import { useGetUsersQuery } from "@/redux/api/userApi";
 import { useUploadFilesMutation } from "@/redux/api/commonApi";
 import { useCreateChatRoomMutation } from "@/redux/api/chatApi";
 
 
-function OverlayScreen({ onClose }) {
-  const [selectedUsers, setSelectedUsers] = useState([]);
+function OverlayScreen(onClose:any) {
+  const [selectedUsers, setSelectedUsers] = useState<any[]>([]);
   const [groupName, setGroupName] = useState("");
   const [groupPic, setGroupPic] = useState(null);
   const [fileName, setFileName] = useState("");
 
-  const { data: users, isLoading, isError } = useGetUsersQuery();
+  const { data: users, isLoading, isError } = useGetUsersQuery(undefined);
   const [createChatRoom] = useCreateChatRoomMutation();
   const [uploadFiles] = useUploadFilesMutation();
 
-  const handleUserSelect = (userId) => {
-    setSelectedUsers((prevSelectedUsers) => {
+  const handleUserSelect = (userId:any) => {
+    setSelectedUsers((prevSelectedUsers:any) => {
       if (prevSelectedUsers.includes(userId)) {
-        return prevSelectedUsers.filter((id) => id !== userId);
+        return prevSelectedUsers.filter((id:any) => id !== userId);
       } else {
         return [...prevSelectedUsers, userId];
       }
     });
   };
 
-  const handleGroupPicChange = (e) => {
+  const handleGroupPicChange = (e:any) => {
     const file = e.target.files[0];
     setGroupPic(file);
     setFileName(file ? file.name : "");
@@ -80,7 +80,7 @@ function OverlayScreen({ onClose }) {
           {isError && <div>Error loading users</div>}
           <div className="scrollbar-thin">
             {users &&
-              users.data.map((user) => (
+              users.data.map((user:any) => (
                 <div
                   key={user._id}
                   className="user-item hover:bg-gray-800"

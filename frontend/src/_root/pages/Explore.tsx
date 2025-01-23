@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 // import { useInView } from "react-intersection-observer";
 
 import { Input } from "@/components/ui";
-import { GridPostList, Loader } from "@/components/shared";
+import { GridPostList } from "@/components/shared";
 import { useGetPostsQuery } from "@/redux/api/postApi";
 import { useSelector } from "react-redux";
 import { useGetUserByIdQuery } from "@/redux/api/userApi";
@@ -31,13 +31,10 @@ const Explore = () => {
   const [searchValue, setSearchValue] = useState("");
   const {
     data: postsDetails,
-    isLoading,
     isSuccess,
-    isError,
-    error,
-  } = useGetPostsQuery();
-  const userId = useSelector((state) => state.auth.userId);
-  const { data: userDetails, isSuccess:isUserDetailsSuccess, isLoading: isUserDetailsLoading} = useGetUserByIdQuery(userId, {skip: !userId});
+  } = useGetPostsQuery(null);
+  const userId = useSelector((state:any) => state.auth.userId);
+  const { data: userDetails, isSuccess:isUserDetailsSuccess} = useGetUserByIdQuery(userId, {skip: !userId});
 
   return (
     <div className="explore-container">

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ProfileViewLinear from "../ProfileViewLinear";
 import { Input } from "@/components/ui";
 import { initializeChatRoom } from "@/redux/api/socket";
@@ -14,18 +14,17 @@ function ChatSidebar() {
   // Fetch chat rooms
   const {
     data: chatRooms,
-    error,
     isLoading,
     isSuccess,
     isError,
-  } = useGetChatRoomsQuery();
+  } = useGetChatRoomsQuery(undefined);
 
   const [ deleteChatRoom ] = useDeleteChatRoomMutation(); // Import the deleteChatRoom mutation
 
   // Initialize chat rooms on successful fetch
   useEffect(() => {
     if (isSuccess && chatRooms?.data.length > 0) {
-      chatRooms.data.forEach((chatRoom) => {
+      chatRooms.data.forEach((chatRoom:any) => {
         initializeChatRoom(chatRoom._id);
       });
     }
@@ -33,13 +32,13 @@ function ChatSidebar() {
 
   // Filter chat rooms based on search input
   const filteredChatRooms = useMemo(() => {
-    return chatRooms?.data.filter((chatRoom) =>
+    return chatRooms?.data.filter((chatRoom:any) =>
       chatRoom.roomName.toLowerCase().includes(searchValue.toLowerCase())
     );
   }, [searchValue, chatRooms]);
 
   // Function to handle chat room deletion
-  const handleDeleteChatRoom = (chatRoomId) => {
+  const handleDeleteChatRoom = (chatRoomId:any) => {
     try {
       deleteChatRoom(chatRoomId)
     } catch (error) {
@@ -77,7 +76,7 @@ function ChatSidebar() {
         {isLoading && <Loader />}
         {isError && <div>Error loading chat rooms</div>}
         {isSuccess && filteredChatRooms.length > 0 ? (
-          filteredChatRooms.map((chatRoom) => (
+          filteredChatRooms.map((chatRoom:any) => (
             <div key={chatRoom._id} className="flex items-center gap-2">
               <ProfileViewLinear chatRoom={chatRoom} />
               <img

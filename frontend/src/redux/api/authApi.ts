@@ -15,7 +15,7 @@ export const authApi = createApi({
         method: "POST",
         body: credentials,
       }),
-      transformResponse: (response, meta, error) => {
+      transformResponse: (response, _, error) => {
         if (error) {
           return {
             success: false,
@@ -34,7 +34,7 @@ export const authApi = createApi({
         method: "POST",
         body: credentials,
       }),
-      transformResponse: (response, meta, error) => {
+      transformResponse: (response, _, error) => {
         if (error) {
           return {
             success: false,

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { FiPaperclip, FiMic, FiMicOff } from "react-icons/fi";
+import { FiPaperclip } from "react-icons/fi";
 import { BsEmojiSmile } from "react-icons/bs";
 import MessageCard from "../MessageCard";
 import { AudioRecorder, useAudioRecorder } from "react-audio-voice-recorder";
@@ -11,7 +11,7 @@ import {
   sendMessage,
   receiveMessage,
   receiveMessageReceived,
-  deleteMessage,
+  // deleteMessage,
   receiveMessageDeleted,
 } from "@/redux/api/socket";
 import { useSelector } from "react-redux";
@@ -22,53 +22,51 @@ import { Message } from "@/types"; // Import the Message type
 function ChatScreen() {
   const { id: chatRoomId } = useParams();
   const [isTyping, setIsTyping] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
-  const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
-  const [audioMessages, setAudioMessages] = useState<string[]>([]);
+  // const [isRecording, setIsRecording] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const recorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
+  // const recorderRef = useRef<MediaRecorder | null>(null);
+  // const audioChunksRef = useRef<Blob[]>([]);
   const chatAreaRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const currentUserId = useSelector((state) => state.auth.userId);
-  const { data: chatRooms, isSuccess } = useGetChatRoomsQuery();
+  const currentUserId = useSelector((state:any) => state.auth.userId);
+  const { data: chatRooms, isSuccess } = useGetChatRoomsQuery(undefined);
   const chatRoom = isSuccess
-    ? chatRooms.data.find((room) => room._id === chatRoomId)
+    ? chatRooms.data.find((room:any) => room._id === chatRoomId)
     : null;
   const [uploadFiles] = useUploadFilesMutation();
 
-  const cacheMessages = (chatRoomId, messages) => {
+  const cacheMessages = (chatRoomId:any, messages:any ) => {
     localStorage.setItem(`chat_${chatRoomId}`, JSON.stringify(messages));
   };
 
-  const getCachedMessages = (chatRoomId) => {
-    const cached = localStorage.getItem(`chat_${chatRoomId}`);
-    return cached ? JSON.parse(cached) : null;
-  };
+  // const getCachedMessages = (chatRoomId) => {
+  //   const cached = localStorage.getItem(`chat_${chatRoomId}`);
+  //   return cached ? JSON.parse(cached) : null;
+  // };
 
   useEffect(() => {
     joinRoom(chatRoomId);
-    receivePreviousMessages((messages) => {
+    receivePreviousMessages((messages:any) => {
       setMessages(messages);
       cacheMessages(chatRoomId, messages);
     });
-    receiveMessage((message) => {
+    receiveMessage((message:any) => {
       setMessages((prevMessages) => {
         const updatedMessages = [...prevMessages, message];
         cacheMessages(chatRoomId, updatedMessages);
         return updatedMessages;
       });
     });
-    receiveMessageReceived((message) => {
-      setMessages((prevMessages) => {
+    receiveMessageReceived((message: string) => {
+      setMessages((prevMessages:any) => {
         const updatedMessages = [...prevMessages, message];
         cacheMessages(chatRoomId, updatedMessages);
         return updatedMessages;
       });
     });
 
-    receiveMessageDeleted(({ messageId }) => {
+    receiveMessageDeleted(({ messageId }:{messageId:any}) => {
       setMessages((prevMessages) => {
         const updatedMessages = prevMessages.filter(
           (msg) => msg._id !== messageId
@@ -117,7 +115,10 @@ function ChatScreen() {
           user: {
             _id: currentUserId,
             name: "You",
-            profilePic: "", // Add current user's profile pic if available
+            profilePic: "",
+            username: "you",
+            bio: "you",
+            email: "you@gmail.com",
           },
         } as Message, // Ensure the temporary message conforms to the Message type
       ]);
@@ -126,7 +127,7 @@ function ChatScreen() {
         const response = await uploadFiles(formData).unwrap();
         console.log("Uploaded files:", response);
 
-        const attachments = response.data.map((file) => ({
+        const attachments = response.data.map((file:any) => ({
           name: file.name,
           type: file.type,
           url: file.url,
@@ -152,7 +153,7 @@ function ChatScreen() {
     if (chatAreaRef.current) {
       chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
     }
-  }, [isTyping, audioMessages, messages]);
+  }, [isTyping, messages]);
 
   const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsTyping(e.target.value.trim() !== "");
@@ -168,16 +169,16 @@ function ChatScreen() {
     }
   };
 
-  const handleDeleteMessage = (messageId) => {
-    deleteMessage(messageId);
-    setMessages((prevMessages) => {
-      const updatedMessages = prevMessages.filter(
-        (msg) => msg._id !== messageId
-      );
-      cacheMessages(chatRoomId, updatedMessages);
-      return updatedMessages;
-    });
-  };
+  // const handleDeleteMessage = (messageId:any) => {
+  //   deleteMessage(messageId);
+  //   setMessages((prevMessages) => {
+  //     const updatedMessages = prevMessages.filter(
+  //       (msg) => msg._id !== messageId
+  //     );
+  //     cacheMessages(chatRoomId, updatedMessages);
+  //     return updatedMessages;
+  //   });
+  // };
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 468);
 
@@ -216,6 +217,9 @@ function ChatScreen() {
           _id: currentUserId,
           name: "You",
           profilePic: "",
+          username: "you",
+          bio: "you",
+          email: "you@gmail.com",
         },
       } as Message, // Ensure the temporary message conforms to the Message type
     ]);
@@ -242,39 +246,39 @@ function ChatScreen() {
     }
   };
 
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
-      recorderRef.current = recorder;
+  // const startRecording = async () => {
+  //   try {
+  //     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  //     const recorder = new MediaRecorder(stream);
+  //     recorderRef.current = recorder;
 
-      recorder.ondataavailable = (e) => {
-        if (e.data.size > 0) {
-          audioChunksRef.current.push(e.data);
-        }
-      };
+  //     recorder.ondataavailable = (e) => {
+  //       if (e.data.size > 0) {
+  //         audioChunksRef.current.push(e.data);
+  //       }
+  //     };
 
-      recorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, {
-          type: "audio/mpeg",
-        });
-        addAudioElement(audioBlob);
-        audioChunksRef.current = [];
-      };
+  //     recorder.onstop = () => {
+  //       const audioBlob = new Blob(audioChunksRef.current, {
+  //         type: "audio/mpeg",
+  //       });
+  //       addAudioElement(audioBlob);
+  //       audioChunksRef.current = [];
+  //     };
 
-      recorder.start();
-      setIsRecording(true);
-    } catch (error) {
-      console.error("Error accessing microphone:", error);
-    }
-  };
+  //     recorder.start();
+  //     // setIsRecording(true);
+  //   } catch (error) {
+  //     console.error("Error accessing microphone:", error);
+  //   }
+  // };
 
-  const stopRecording = () => {
-    if (recorderRef.current) {
-      recorderRef.current.stop();
-      setIsRecording(false);
-    }
-  };
+  // const stopRecording = () => {
+  //   if (recorderRef.current) {
+  //     recorderRef.current.stop();
+  //     // setIsRecording(false);
+  //   }
+  // };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (isMobile) {
@@ -337,11 +341,11 @@ function ChatScreen() {
                 timestamp={msg.timestamp}
                 status={msg.status}
                 profilePic={msg.user.profilePic}
-                onDelete={() => handleDeleteMessage(msg._id)}
+                // onDelete={() => handleDeleteMessage(msg._id)}
                 name={msg.user.name}
-                email={msg.user.email}
-                username={msg.user.username}
-                bio={msg.user.bio}
+                // email={msg.user.email}
+                // username={msg.user.username}
+                // bio={msg.user.bio}
                 isUploading={msg.status === "uploading"}
               />
             );

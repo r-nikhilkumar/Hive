@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -40,7 +40,11 @@ function SignUpForm() {
       toast.success("Account created successfully");
     }
     if (isError) {
-      toast.error(error?.data?.message || "An error occurred");
+      if ('data' in error) {
+        toast.error((error as any).data?.message || "An error occurred");
+      } else {
+        toast.error("An error occurred");
+      }
     }
   }, [isSuccess, isError, error]);
 
@@ -49,7 +53,11 @@ function SignUpForm() {
     try {
       signUp(values);
     } catch (err) {
-      toast.error(err?.data?.message || "An error occurred");
+      if (err && typeof err === 'object' && 'data' in err) {
+        toast.error((err as any).data?.message || "An error occurred");
+      } else {
+        toast.error("An error occurred");
+      }
     }
   }
 

@@ -11,7 +11,7 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { SignInValidation } from "@/lib/validation";
 import Loader from "@/components/shared/Loader";
 import { Link, useNavigate } from "react-router-dom";
@@ -63,7 +63,11 @@ function SignInForm() {
       navigate("/"); // Redirect to home page
     }
     if (isError) {
-      toast.error(error?.data?.message || "An error occurred");
+      if ('data' in error) {
+        toast.error((error as any).data?.message || "An error occurred");
+      } else {
+        toast.error("An error occurred");
+      }
     }
   }, [isSuccess, isError, error, navigate, dispatch]);
 

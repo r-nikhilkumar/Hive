@@ -1,22 +1,36 @@
 import { Link } from "react-router-dom";
 import { dateFormated } from "@/lib/utils";
 import PostStats from "./PostStats";
-import { Button, Input } from "@/components/ui";
+import { Button } from "@/components/ui";
 import { useState } from "react";
 import SendMessage from "./SendMessage";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { useToggleCommentMutation } from "@/redux/api/postApi";
 
-const PostCard = ({ post, user, userDetails }) => {
+const PostCard = ({
+  post,
+  user,
+  userDetails,
+}: {
+  post: any;
+  user: any;
+  userDetails: any;
+}) => {
   // console.log("user", userDetails);
   if (!post.user) return;
   const [text, setText] = useState("");
   const [toggleComment] = useToggleCommentMutation();
 
-  function handleOnEnter(text) {
-    setText("");
-    toggleComment({ postId: post._id, comment:{ comment:text }, userDetails });
+  function handleOnEnter(text: any) {
+    if (text.trim() !== "") {
+      setText("");
+      toggleComment({
+        postId: post._id,
+        comment: { comment: text },
+        userDetails,
+      });
+    }
   }
 
   return (
@@ -87,7 +101,7 @@ const PostCard = ({ post, user, userDetails }) => {
 
       {post.content && post.content.length > 1 ? (
         <Carousel showThumbs={false}>
-          {post.content.map((url, index) => (
+          {post.content.map((url: any, index: any) => (
             <div key={index} className="post-card_media-container">
               {url.endsWith(".mp4") ? (
                 <video controls className="post-card_media">
@@ -121,28 +135,31 @@ const PostCard = ({ post, user, userDetails }) => {
         </div>
       )}
 
-      {userDetails ? <>
-        <PostStats post={post} userDetails={userDetails} />
-        <div className="post-out-comment">
-          <Link to={`/u/${user._id}`}>
-            <img
-              src={
-                userDetails.profilePic ||
-                "/assets/icons/profile-placeholder.svg"
-              }
-              alt="user"
-              className="w-12 lg:h-12 rounded-full"
+      {userDetails ? (
+        <>
+          <PostStats post={post} userDetails={userDetails} />
+          <div className="post-out-comment">
+            <Link to={`/u/${user._id}`}>
+              <img
+                src={
+                  userDetails.profilePic ||
+                  "/assets/icons/profile-placeholder.svg"
+                }
+                alt="user"
+                className="w-12 lg:h-12 rounded-full"
+              />
+            </Link>
+            <SendMessage
+              text={text}
+              setText={setText}
+              handleOnEnter={handleOnEnter}
+              placeholder={"comment..."}
             />
-          </Link>
-          <SendMessage
-            text={text}
-            setText={setText}
-            handleOnEnter={handleOnEnter}
-            placeholder={"comment..."}
-          />
-        </div>
-      </>
-      : <div></div>}
+          </div>
+        </>
+      ) : (
+        <div></div>
+      )}
     </div>
   );
 };

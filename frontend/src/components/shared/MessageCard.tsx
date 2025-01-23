@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import SingleTick from "/assets/icons/single-tick.svg";
 import DoubleGrayTick from "/assets/icons/double-tick.svg";
 import DoubleBlueTick from "/assets/icons/double-tick-blue.svg";
 import { formatDistanceToNow } from "date-fns"; // Import for time ago formatting
-import { FiMoreVertical } from "react-icons/fi"; // Import for three-dot menu
 
 const MessageCard = ({
   message,
@@ -12,14 +11,13 @@ const MessageCard = ({
   timestamp,
   status,
   profilePic,
-  onDelete,
+  // onDelete,
   name,
-  email,
-  username,
-  bio,
+  // email,
+  // username,
+  // bio,
   isUploading,
-}) => {
-  const [showMenu, setShowMenu] = useState(false);
+}:{message:any, messageType:any, type:any, timestamp:any, status:any, profilePic:any, name:any, isUploading:any}) => {
   const [loading, setLoading] = useState(isUploading);
 
   useEffect(() => {
@@ -80,7 +78,7 @@ const MessageCard = ({
     ) {
       return (
         <div className="message-media-gallery">
-          {message.map((attachment, index) => {
+          {message.map((attachment:any, index:any) => {
             if (attachment?.type.startsWith("image/")) {
               return (
                 <div key={index} className="message-media-container">

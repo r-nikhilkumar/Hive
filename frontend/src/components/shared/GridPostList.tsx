@@ -8,7 +8,6 @@ const GridPostList = ({
   posts,
   user,
   showUser = true,
-  showStats = true,
 }: any) => {
   // const { user } = useUserContext();
 
@@ -45,7 +44,7 @@ const GridPostList = ({
                 <p className="line-clamp-1">{post.user.name}</p>
               </div>
             )}
-            {user._id && <PostStats post={post} userId={user._id} />}
+            {user._id && <PostStats post={post} userDetails={user} />}
           </div>
         </li>
       ))}

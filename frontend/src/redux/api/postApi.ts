@@ -43,19 +43,19 @@ export const postApi = createApi({
       invalidatesTags: ["Post"],
     }),
     toggleLike: builder.mutation({
-      query: ({postId, userId}) => ({
+      query: ({ postId }) => ({
         url: `/toggle-like/${postId}`,
         method: "POST",
       }),
       invalidatesTags: ["Post"],
-      onQueryStarted: async ({postId, userId}, { dispatch, queryFulfilled }) => {
+      onQueryStarted: async ({ postId, userId }, { dispatch, queryFulfilled }) => {
         const patchResult = dispatch(
           postApi.util.updateQueryData('getPosts', undefined, (draft) => {
-            const post = draft.data.find((post) => post._id === postId);
+            const post = draft.data.find((post:any) => post._id === postId);
             if (post) {
-              post.likesCount += post.likes.likes.some((like) => like.userId === userId) ? -1 : 1;
-              post.likes.likes = post.likes.likes.some((like) => like.userId === userId)
-                ? post.likes.likes.filter((like) => like.userId !== userId)
+              post.likesCount += post.likes.likes.some((like:any) => like.userId === userId) ? -1 : 1;
+              post.likes.likes = post.likes.likes.some((like:any) => like.userId === userId)
+                ? post.likes.likes.filter((like:any) => like.userId !== userId)
                 : [...post.likes.likes, { userId }];
             }
           })
@@ -68,10 +68,10 @@ export const postApi = createApi({
       },
     }),
     toggleComment: builder.mutation({
-      query: ({ postId, comment, userDetails }) => ({
+      query: ({ postId, comment }) => ({
         url: `/toggle-comment/${postId}`,
         method: "POST",
-        body: {...comment},
+        body: { ...comment },
       }),
       invalidatesTags: ["Post"],
       onQueryStarted: async ({ postId, comment, userDetails }, { dispatch, queryFulfilled }) => {
@@ -88,7 +88,7 @@ export const postApi = createApi({
         };
         const patchResult = dispatch(
           postApi.util.updateQueryData('getPosts', undefined, (draft) => {
-            const post = draft.data.find((post) => post._id === postId);
+            const post = draft.data.find((post:any) => post._id === postId);
             if (post) {
               post.comments.comments = [...post.comments.comments, tempComment];
             }
@@ -98,9 +98,9 @@ export const postApi = createApi({
           const { data: updatedComment } = await queryFulfilled;
           dispatch(
             postApi.util.updateQueryData('getPosts', undefined, (draft) => {
-              const post = draft.data.find((post) => post._id === postId);
+              const post = draft.data.find((post:any) => post._id === postId);
               if (post) {
-                post.comments.comments = post.comments.comments.map((cmt) =>
+                post.comments.comments = post.comments.comments.map((cmt:any) =>
                   cmt._id === tempId ? updatedComment : cmt
                 );
               }

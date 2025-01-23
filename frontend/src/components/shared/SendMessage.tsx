@@ -1,4 +1,3 @@
-import React from "react";
 import { Button } from "../ui";
 import InputEmoji from "react-input-emoji";
 
@@ -14,6 +13,8 @@ function SendMessage({ text, setText, handleOnEnter, placeholder }: any) {
         placeholder={placeholder}
         background="#0f172a"
         borderColor="gray"
+        shouldReturn={true}
+        shouldConvertEmojiToImage={false}
       />
       <Button
         variant="ghost"

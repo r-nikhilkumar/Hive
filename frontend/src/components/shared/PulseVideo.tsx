@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
-export const PulseVideo = ({ src }) => {
-  const videoRef = useRef(null);
+export const PulseVideo = ({ src }:{src:any}) => {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [liked, setLiked] = useState(false);
   const [numberLikes, setNumberLikes] = useState(500);
   const { ref, inView } = useInView({
@@ -11,9 +11,9 @@ export const PulseVideo = ({ src }) => {
 
   useEffect(() => {
     if (inView) {
-      videoRef.current.play();
+      videoRef.current?.play();
     } else {
-      videoRef.current.pause();
+      videoRef.current?.pause();
     }
   }, [inView]);
 

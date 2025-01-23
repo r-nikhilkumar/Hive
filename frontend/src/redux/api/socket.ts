@@ -1,6 +1,6 @@
 import io from "socket.io-client";
 
-let socket = null;
+let socket:any = null;
 export const connectSocket = () => {
   if (!socket) {
     socket = io("http://localhost:3003", {
@@ -11,20 +11,20 @@ export const connectSocket = () => {
   return socket;
 };
 
-export const initializeChatRoom = (chatRoomId) => {
+export const initializeChatRoom = (chatRoomId:any) => {
   if (socket) socket.emit("initializeChatRoom", { chatRoomId });
 };
 
-export const joinRoom = (chatRoomId) => {
+export const joinRoom = (chatRoomId:any) => {
   if (socket) socket.emit("joinRoom", { chatRoomId });
 };
 
-export const leaveRoom = (chatRoomId) => {
+export const leaveRoom = (chatRoomId:any) => {
   if (socket) socket.emit("leaveRoom", { chatRoomId });
 };
 
-export const sendMessage = (chatRoomId, message, attachments = []) => {
-  const formattedAttachments = attachments.map((attachment) => ({
+export const sendMessage = (chatRoomId:any, message:any, attachments:any = []) => {
+  const formattedAttachments = attachments.map((attachment:any) => ({
     name: attachment.name,
     type: attachment.type,
     url: attachment.url,
@@ -37,13 +37,13 @@ export const sendMessage = (chatRoomId, message, attachments = []) => {
     });
 };
 
-export const receiveMessage = (callback) => {
+export const receiveMessage = (callback:any) => {
   if (socket) socket.off("message").on("message", callback); // Ensure only one listener
 };
 
-export const receivePreviousMessages = (callback) => {
-  if (socket) socket.off("previousMessages").on("previousMessages", (messages) => {
-    const formattedMessages = messages.map(msg => ({
+export const receivePreviousMessages = (callback:any) => {
+  if (socket) socket.off("previousMessages").on("previousMessages", (messages:any) => {
+    const formattedMessages = messages.map((msg:any) => ({
       ...msg,
       user: {
         _id: msg.user._id,
@@ -58,23 +58,23 @@ export const receivePreviousMessages = (callback) => {
   });
 };
 
-export const receiveMessageReceived = (callback) => {
+export const receiveMessageReceived = (callback:any) => {
   if (socket) socket.off("messageReceived").on("messageReceived", callback); // Ensure only one listener
 };
 
-export const cacheMessages = (chatRoomId, messages) => {
+export const cacheMessages = (chatRoomId:any, messages:any) => {
   localStorage.setItem(`chatRoom_${chatRoomId}_messages`, JSON.stringify(messages));
 };
 
-export const getCachedMessages = (chatRoomId) => {
+export const getCachedMessages = (chatRoomId:any) => {
   const cachedMessages = localStorage.getItem(`chatRoom_${chatRoomId}_messages`);
   return cachedMessages ? JSON.parse(cachedMessages) : [];
 };
 
-export const deleteMessage = (messageId) => {
+export const deleteMessage = (messageId:any) => {
   if (socket) socket.emit("deleteMessage", { messageId });
 };
 
-export const receiveMessageDeleted = (callback) => {
+export const receiveMessageDeleted = (callback:any) => {
   if (socket) socket.off("messageDeleted").on("messageDeleted", callback); // Ensure only one listener
 };

@@ -141,7 +141,7 @@ const PostForm = ({ post, action }: PostFormProps) => {
         <FormField
           control={form.control}
           name="file"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel className="shad-form_label">Add Media</FormLabel>
               <FormControl>

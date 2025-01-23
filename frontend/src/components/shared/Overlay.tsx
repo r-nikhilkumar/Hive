@@ -1,7 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-const Overlay = ({ isVisible, onClose, children }) => {
+interface OverlayProps {
+  isVisible: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+}
+
+const Overlay = ({ isVisible, onClose, children }: OverlayProps) => {
   if (!isVisible) return null;
 
   return ReactDOM.createPortal(

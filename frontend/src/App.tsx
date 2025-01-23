@@ -17,14 +17,12 @@ import ChatScreen from "./components/shared/chats/ChatScreen";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import "./globals.css";
 import Notifications from "./_root/pages/Notifications";
-import { useSignInMutation } from "./redux/api/authApi";
 import { connectSocket } from "./redux/api/socket";
 import { useSelector } from "react-redux";
-import { useGetUserByIdQuery, useGetUserDetailsQuery } from "./redux/api/userApi"; // Import the user details query
 
 function App() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const isAuthenticated = useSelector((state:any) => state.auth.isAuthenticated);
 
   // Listen for window resize changes
   useEffect(() => {

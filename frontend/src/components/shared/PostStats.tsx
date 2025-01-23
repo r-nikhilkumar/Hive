@@ -1,15 +1,19 @@
-import { Models } from "appwrite";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 
-import { checkIsLiked, dateFormated } from "@/lib/utils";
+import { dateFormated } from "@/lib/utils";
 import Overlay from "./Overlay";
 import { useToggleLikeMutation } from "@/redux/api/postApi";
 
-const PostStats = ({ post, userDetails }) => {
+interface PostStatsProps {
+  post: any;
+  userDetails: any;
+}
+
+const PostStats = ({ post, userDetails }: PostStatsProps) => {
   const location = useLocation();
   const [toggleLike] = useToggleLikeMutation();
-  const isLiked = post.likes.likes.some((like) => like.userId === userDetails._id);
+  const isLiked = post.likes.likes.some((like: any) => like.userId === userDetails._id);
   const likesCount = post.likesCount;
   const [isOverlayVisible, setOverlayVisible] = useState(false);
 
@@ -17,7 +21,7 @@ const PostStats = ({ post, userDetails }) => {
     e: React.MouseEvent<HTMLImageElement, MouseEvent>
   ) => {
     e.stopPropagation();
-    toggleLike({ postId: post._id, userId:userDetails._id });
+    toggleLike({ postId: post._id, userId: userDetails._id });
   };
 
   const handleSavePost = (
@@ -32,7 +36,6 @@ const PostStats = ({ post, userDetails }) => {
     e.stopPropagation();
     setOverlayVisible(true);
   };
-
 
   const containerStyles = location.pathname.startsWith("/profile")
     ? "w-full"
@@ -69,7 +72,7 @@ const PostStats = ({ post, userDetails }) => {
           alt="share"
           width={20}
           height={20}
-          onClick={(e) => {}}
+          onClick={() => {}}
           className="cursor-pointer"
         />
       </div>
@@ -85,10 +88,10 @@ const PostStats = ({ post, userDetails }) => {
         />
       </div>
       <Overlay isVisible={isOverlayVisible} onClose={() => setOverlayVisible(false)}>
-        <div className="p-4 bg-dark-3 boder border-2 border-dark-4 rounded">
+        <div className="p-4 bg-dark-3 border border-2 border-dark-4 rounded">
           <h2 className="text-lg font-semibold mb-4">Comments</h2>
           <div className="overflow-y-auto max-h-96 custom-scrollbar">
-          {post.comments.comments.map((comment) => (
+          {post.comments.comments.map((comment: any) => (
             <div key={comment?._id} className="mb-4 flex items-start">
               <img
                 src={comment?.user?.profilePic || "/assets/icons/profile-placeholder.svg"}

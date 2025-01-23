@@ -1,35 +1,37 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { PulseVideo } from "@/components/shared/PulseVideo";
 
 const Pulse = () => {
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const handleKeyDown = (event) => {
-    if (event.key === "ArrowDown" && containerRef.current) {
-      // Scroll to the next video
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (containerRef.current) {
       const container = containerRef.current;
       const currentScroll = container.scrollTop;
       const height = window.innerHeight;
-      container.scrollTo({
-        top: currentScroll + height,
-        behavior: "smooth",
-      });
-    }
-    if (event.key === "ArrowUp" && containerRef.current) {
-      // Scroll to the previous video
-      const container = containerRef.current;
-      const currentScroll = container.scrollTop;
-      const height = window.innerHeight;
-      container.scrollTo({
-        top: currentScroll - height,
-        behavior: "smooth",
-      });
+
+      if (event.key === "ArrowDown") {
+        // Scroll to the next video
+        container.scrollTo({
+          top: currentScroll + height,
+          behavior: "smooth",
+        });
+      } else if (event.key === "ArrowUp") {
+        // Scroll to the previous video
+        container.scrollTo({
+          top: currentScroll - height,
+          behavior: "smooth",
+        });
+      }
     }
   };
 
   useEffect(() => {
+    // Attach the native KeyboardEvent listener
     window.addEventListener("keydown", handleKeyDown);
+
     return () => {
+      // Cleanup the event listener on component unmount
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);

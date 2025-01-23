@@ -1,17 +1,15 @@
 import { useEffect } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-
-import { Button } from "../ui/button";
+import { Link, useNavigate } from "react-router-dom";
 
 const Topbar = () => {
   const navigate = useNavigate();
   const isSuccess = false;
   const hasNotifications = true;
 
-  const signOut = ()=>{
-    navigate("/sign-in")
-    console.log("signed out")
-  }
+  // const signOut = ()=>{
+  //   navigate("/sign-in")
+  //   console.log("signed out")
+  // }
 
   useEffect(() => {
     if (isSuccess) navigate(0);

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 import { Button } from "../ui/button";
 
-const UserCard = ({user}) => {
+const UserCard = ({user}:{user:any}) => {
   return (
     <Link to={`/u/${user.id}`} className="user-card">
       <img
