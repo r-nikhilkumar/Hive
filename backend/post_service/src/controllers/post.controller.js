@@ -158,7 +158,7 @@ const toggleCommentApi = async (req, res) => {
 
     // Add comment
     const comment = req.body.comment;
-    console.log("Comment: ", comment);
+    // console.log("Comment: ", comment);
     const user = req.user;
     const updatedPost = await addComment(postId, user, comment);
     return res
