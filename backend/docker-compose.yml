@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  gateway:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - USER_PORT=3001
+      - POST_PORT=3002
+      - CHAT_PORT=3003
+    depends_on:
+      - users
+      - posts
+      - chats
+      # - redis
+
+  users:
+    build:
+      context: ./user_service
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+
+  posts:
+    build:
+      context: ./post_service
+    ports:
+      - "3002:3002"
+    environment:
+      - PORT=3002
+
+  chats:
+    build:
+      context: ./chat_service
+    ports:
+      - "3003:3003"
+    environment:
+      - PORT=3003
+
+  # redis:
+  #   image: "redis/redis-stack:latest"
+  #   ports:
+  #     - "6379:6379"
+  #     - "8001:8001"

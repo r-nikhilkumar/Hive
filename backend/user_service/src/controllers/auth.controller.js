@@ -67,31 +67,30 @@ const login = async (req, res) => {
     const token = generateToken(user);
     const refreshToken = generateRefreshToken(user);
     user.refreshToken = refreshToken;
-    // console.log(process.env.NODE_ENV);
     await user.save();
     res.cookie("token", token, {
-      // httpOnly: true,
+      httpOnly: true,
       secure: true,
-      sameSite: 'None',
+      sameSite: "None",
+      domain: "hive-gold.vercel.app",
+      path: "/",
       maxAge: 60 * 60 * 1000, // 1 hour
-      // domain: 'process.env.COOKIE_DOMAIN' || "localhost", // Ensure this matches your frontend domain
-      // path: "/", // Available across the entire domain
     });
     res.cookie("userId", user._id, {
-      // httpOnly: false,
+      httpOnly: false,
       secure: true,
-      sameSite: 'None',
+      sameSite: "None",
+      domain: "hive-gold.vercel.app",
+      path: "/",
       maxAge: 60 * 60 * 1000, // 1 hour
-      // domain: process.env.COOKIE_DOMAIN || "localhost", // Ensure this matches your frontend domain
-      // path: "/", // Available across the entire domain
     });
     res.cookie("refreshToken", refreshToken, {
-      // httpOnly: true,
+      httpOnly: true,
       secure: true,
-      sameSite: 'None',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      // domain: process.env.COOKIE_DOMAIN || "localhost", // Ensure this matches your frontend domain
-      // path: "/", // Available across the entire domain
+      sameSite: "None",
+      domain: "hive-gold.vercel.app",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 Days
     });
     return res
       .status(200)
@@ -121,7 +120,7 @@ const refreshToken = async (req, res) => {
       secure: process.env.NODE_ENV === "production",
       sameSite: "Lax",
       maxAge: 24 * 60 * 60 * 1000, // 1 day
-      domain: process.env.COOKIE_DOMAIN || "localhost", // Ensure this matches your frontend domain
+      domain: 'hive-gold.vercel.app', // Ensure this matches your frontend domain
       path: "/", // Available across the entire domain
     });
     res.cookie("refreshToken", refreshToken, {
@@ -129,7 +128,7 @@ const refreshToken = async (req, res) => {
       secure: process.env.NODE_ENV === "production",
       sameSite: "Lax",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-      domain: process.env.COOKIE_DOMAIN || "localhost", // Ensure this matches your frontend domain
+      domain: 'hive-gold.vercel.app', // Ensure this matches your frontend domain
       path: "/", // Available across the entire domain
     });
     return res
@@ -147,8 +146,8 @@ const logout = async (req, res) => {
     const user = req.user;
     user.refreshToken = "";
     await user.save();
-    res.clearCookie("token", { domain: process.env.COOKIE_DOMAIN || "localhost", path: "/" }); // Clear the authentication token cookie
-    res.clearCookie("refreshToken", { domain: process.env.COOKIE_DOMAIN || "localhost", path: "/" }); // Clear the refresh token cookie
+    res.clearCookie("token", { domain: 'hive-gold.vercel.app', path: "/" }); // Clear the authentication token cookie
+    res.clearCookie("refreshToken", { domain: 'hive-gold.vercel.app', path: "/" }); // Clear the refresh token cookie
     return res
       .status(200)
       .json(ApiResponse.success(null, "User logged out successfully"));

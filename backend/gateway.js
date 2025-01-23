@@ -9,6 +9,7 @@ const { createClient } = require("redis");
 const { uploadFilesApi } = require("./srcCommon/controllerCommon/uploadFilesApi");
 const multer = require("multer");
 const upload = multer({ dest: "./temp/upload/" });
+const cookieParser = require("cookie-parser");
 
 dotenv.config();
 
@@ -20,6 +21,8 @@ const io = new Server(server, {
     credentials: true,
   },
 });
+
+app.use(cookieParser());
 
 // Redis setup
 const pubClient = createClient({ host: "localhost", port: 6379 });
