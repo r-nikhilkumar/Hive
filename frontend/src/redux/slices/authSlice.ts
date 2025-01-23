@@ -1,15 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getUserIdFromCookies } from "@/utils/auth";
-
-// const initialState = {
-//   isAuthenticated: !!getUserIdFromCookies(),
-//   userId: getUserIdFromCookies(),
-// };
-
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    isAuthenticated: false,
+    isAuthenticated: !!getUserIdFromCookies(),
     userId: getUserIdFromCookies(),
   },
   reducers: {
