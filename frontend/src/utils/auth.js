@@ -5,12 +5,12 @@ const getCookie = (name) => {
     return null;
   }
   console.log("Cookies: ", cookies);
-  let cookieArr = cookies
-    .split("; ")
-    .filter((cookie) => cookie.includes("localhost")); // Split cookies into key-value pairs
-  if (cookieArr.length === 0) {
-    cookieArr = cookies.split("; ");
-  }
+  // let cookieArr = cookies
+  //   .split("; ")
+  //   .filter((cookie) => cookie.includes("localhost")); // Split cookies into key-value pairs
+  // if (cookieArr.length === 0) {
+  const cookieArr = cookies.split("; ");
+  // }
   console.log("Cookies: ", cookieArr);
   for (const cookie of cookieArr) {
     const [key, value] = cookie.split("=");
