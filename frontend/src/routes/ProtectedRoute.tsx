@@ -4,7 +4,7 @@ import { RootState } from "@/redux/store";
 
 const ProtectedRoute = () => {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
-  console.log(isAuthenticated);
+  // console.log(isAuthenticated);
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/sign-in" />;
 };
