@@ -4,12 +4,12 @@ const cors = require("cors");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const http = require("http");
 const { Server } = require("socket.io");
-// const { createAdapter } = require("@socket.io/redis-adapter");
-// const { createClient } = require("redis");
+const { createAdapter } = require("@socket.io/redis-adapter");
 const { uploadFilesApi } = require("./srcCommon/controllerCommon/uploadFilesApi");
 const multer = require("multer");
 const upload = multer({ dest: "./temp/upload/" });
 const cookieParser = require("cookie-parser");
+const client = require("./config/redis");
 
 dotenv.config();
 
@@ -22,6 +22,12 @@ const io = new Server(server, {
   },
 });
 
+// Redis setup
+const pubClient = client;
+const subClient = pubClient.duplicate();
+io.adapter(createAdapter(pubClient, subClient));
+
+app.use(cookieParser());
 app.use(cookieParser());
 
 const PORT = process.env.PORT || 3000;
@@ -32,6 +38,7 @@ app.use(
     credentials: true,
   })
 );
+
 
 app.get("/", (req, res) => {
   return res.send({ message: "Welcome to the gateway!" });

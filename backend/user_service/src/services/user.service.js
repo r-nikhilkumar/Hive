@@ -1,8 +1,16 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
+const { getUserFromCache, cacheUser } = require("../redis/user.redis");
 
 const getUserById = async (id) => {
-  return await User.findById(id).select("-password -__v -refreshToken");
+  // let user = await getUserFromCache(id);
+  // if (!user) {
+    const user = await User.findById(id).select("-password -__v -refreshToken");
+    // if (user) {
+      // await cacheUser(id, user);
+    // }
+  // }
+  return user;
 };
 
 const getUserByUsername = async (username) => {

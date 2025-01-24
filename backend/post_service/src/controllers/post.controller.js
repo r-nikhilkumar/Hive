@@ -66,6 +66,7 @@ const getPostApi = async (req, res) => {
 
 const getPostsApi = async (req, res) => {
   try {
+    // console.log("Fetching posts...");
     const result = await apolloServer.executeOperation({
       query: GET_POSTS_WITH_USER,
       context: { userLoader: createUserLoader() },
@@ -80,6 +81,7 @@ const getPostsApi = async (req, res) => {
       throw new Error("No posts found");
     }
     // const posts = await getPosts();
+    console.log("Posts fetched: ", posts);
     return res.status(200).json(ApiResponse.success(posts, "Posts sent"));
   } catch (error) {
     return res
