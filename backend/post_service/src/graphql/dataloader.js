@@ -9,7 +9,7 @@ const createUserLoader = () =>
           ids: userIds,
         });
         const users = response.data.data;
-        console.log(`Fetched users:`, users);
+        // console.log(`Fetched users:`, users);
 
         const userMap = users.reduce((acc, user) => {
           if (user && user._id) {
