@@ -4,8 +4,8 @@ const cors = require("cors");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 const http = require("http");
 const { Server } = require("socket.io");
-const { createAdapter } = require("@socket.io/redis-adapter");
-const { createClient } = require("redis");
+// const { createAdapter } = require("@socket.io/redis-adapter");
+// const { createClient } = require("redis");
 const { uploadFilesApi } = require("./srcCommon/controllerCommon/uploadFilesApi");
 const multer = require("multer");
 const upload = multer({ dest: "./temp/upload/" });
@@ -24,15 +24,6 @@ const io = new Server(server, {
 
 app.use(cookieParser());
 
-// Redis setup
-const pubClient = createClient({ host: "localhost", port: 6379 });
-const subClient = pubClient.duplicate();
-
-pubClient.connect();
-subClient.connect();
-
-io.adapter(createAdapter(pubClient, subClient));
-
 const PORT = process.env.PORT || 3000;
 
 app.use(
@@ -47,7 +38,6 @@ app.get("/", (req, res) => {
 });
 
 app.post("/upload", upload.array("files"), uploadFilesApi);
-
 
 // Proxy HTTP requests to microservices
 app.use(
@@ -76,10 +66,9 @@ app.use(
 io.on("connection", (socket) => {
   console.log("A user connected to the gateway: " + socket.id);
 
-  // Forward socket events to Redis (Pub/Sub)
   socket.on("joinRoom", (data) => {
     console.log("User joined room via gateway:", data);
-    io.emit("joinRoom", data); // Broadcast to Redis-connected services
+    io.emit("joinRoom", data);
   });
 
   socket.on("message", (data) => {

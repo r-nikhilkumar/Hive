@@ -4,8 +4,6 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const http = require("http");
 const { Server } = require("socket.io");
-const { createAdapter } = require("@socket.io/redis-adapter");
-const { createClient } = require("redis");
 const chatRoute = require("./routes/chat.route");
 const connectDB = require("./config/db");
 const { getUserFromToken } = require("./config/jwt");
@@ -28,16 +26,6 @@ const io = new Server(server, {
     credentials: true,
   },
 });
-
-// Redis setup
-const pubClient = createClient({ host: "localhost", port: 6379 });
-const subClient = pubClient.duplicate();
-
-pubClient.connect();
-subClient.connect();
-app.use(cors());
-
-io.adapter(createAdapter(pubClient, subClient));
 
 const PORT = process.env.CHAT_PORT || 3003;
 
@@ -66,10 +54,13 @@ startApolloServer();
 const activeUsers = {};
 
 io.use((socket, next) => {
-  const token = socket.handshake.headers.cookie
+  let token = socket.handshake.headers.cookie
     ?.split("; ")
     .find((row) => row.startsWith("token="))
     ?.split("=")[1];
+  // console.log("socket things: ", socket.handshake);
+  if (!token) token = socket.handshake.auth?.authorization?.split(" ")[1];
+  // console.log("token", token);
   if (!token) return next(new Error("Authentication error"));
   try {
     socket.user = getUserFromToken(token);

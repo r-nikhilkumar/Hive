@@ -1,6 +1,7 @@
 import { BASE_URL } from "@/constants";
+import { getTokenFromLocalStorage } from "@/utils/auth";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { nanoid } from 'nanoid';
+import { nanoid } from "nanoid";
 
 // ...existing code...
 
@@ -9,6 +10,13 @@ export const postApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: `${BASE_URL}/posts`,
     credentials: "include",
+    prepareHeaders: (headers) => {
+      const token = getTokenFromLocalStorage();
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
   }),
   tagTypes: ["Post"],
   endpoints: (builder) => ({
@@ -48,14 +56,23 @@ export const postApi = createApi({
         method: "POST",
       }),
       invalidatesTags: ["Post"],
-      onQueryStarted: async ({ postId, userId }, { dispatch, queryFulfilled }) => {
+      onQueryStarted: async (
+        { postId, userId },
+        { dispatch, queryFulfilled }
+      ) => {
         const patchResult = dispatch(
-          postApi.util.updateQueryData('getPosts', undefined, (draft) => {
-            const post = draft.data.find((post:any) => post._id === postId);
+          postApi.util.updateQueryData("getPosts", undefined, (draft) => {
+            const post = draft.data.find((post: any) => post._id === postId);
             if (post) {
-              post.likesCount += post.likes.likes.some((like:any) => like.userId === userId) ? -1 : 1;
-              post.likes.likes = post.likes.likes.some((like:any) => like.userId === userId)
-                ? post.likes.likes.filter((like:any) => like.userId !== userId)
+              post.likesCount += post.likes.likes.some(
+                (like: any) => like.userId === userId
+              )
+                ? -1
+                : 1;
+              post.likes.likes = post.likes.likes.some(
+                (like: any) => like.userId === userId
+              )
+                ? post.likes.likes.filter((like: any) => like.userId !== userId)
                 : [...post.likes.likes, { userId }];
             }
           })
@@ -74,7 +91,10 @@ export const postApi = createApi({
         body: { ...comment },
       }),
       invalidatesTags: ["Post"],
-      onQueryStarted: async ({ postId, comment, userDetails }, { dispatch, queryFulfilled }) => {
+      onQueryStarted: async (
+        { postId, comment, userDetails },
+        { dispatch, queryFulfilled }
+      ) => {
         const tempId = nanoid();
         const tempComment = {
           ...comment,
@@ -82,13 +102,14 @@ export const postApi = createApi({
           user: {
             _id: userDetails._id,
             username: userDetails.username,
-            profilePic: userDetails.profilePic || "/assets/icons/profile-placeholder.svg",
+            profilePic:
+              userDetails.profilePic || "/assets/icons/profile-placeholder.svg",
           },
           date: new Date().getTime().toString(),
         };
         const patchResult = dispatch(
-          postApi.util.updateQueryData('getPosts', undefined, (draft) => {
-            const post = draft.data.find((post:any) => post._id === postId);
+          postApi.util.updateQueryData("getPosts", undefined, (draft) => {
+            const post = draft.data.find((post: any) => post._id === postId);
             if (post) {
               post.comments.comments = [...post.comments.comments, tempComment];
             }
@@ -97,11 +118,11 @@ export const postApi = createApi({
         try {
           const { data: updatedComment } = await queryFulfilled;
           dispatch(
-            postApi.util.updateQueryData('getPosts', undefined, (draft) => {
-              const post = draft.data.find((post:any) => post._id === postId);
+            postApi.util.updateQueryData("getPosts", undefined, (draft) => {
+              const post = draft.data.find((post: any) => post._id === postId);
               if (post) {
-                post.comments.comments = post.comments.comments.map((cmt:any) =>
-                  cmt._id === tempId ? updatedComment : cmt
+                post.comments.comments = post.comments.comments.map(
+                  (cmt: any) => (cmt._id === tempId ? updatedComment : cmt)
                 );
               }
             })

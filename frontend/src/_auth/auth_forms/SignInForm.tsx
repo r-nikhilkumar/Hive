@@ -20,10 +20,10 @@ import "react-toastify/dist/ReactToastify.css";
 import { useSignInMutation } from "@/redux/api/authApi";
 import { useDispatch } from "react-redux";
 import { setAuthState } from "@/redux/slices/authSlice";
-import { getUserIdFromCookies } from "@/utils/auth";
+import { getUserIdFromCookies, setRefreshTokenToLocalStorage, setTokenToLocalStorage, setUserIdToLocalStorage } from "@/utils/auth";
 
 function SignInForm() {
-  const [signIn, { isLoading, isSuccess, isError, error }] =
+  const [signIn, { isLoading, isSuccess, isError, error, data:loginData }] =
     useSignInMutation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -58,9 +58,13 @@ function SignInForm() {
   useEffect(() => {
     if (isSuccess) {
       toast.success("Logged in successfully");
-      const userId = getUserIdFromCookies();
-      dispatch(setAuthState({ isAuthenticated: true, userId }));
-      navigate("/"); // Redirect to home page
+      console.log("Login data: ", loginData);
+      const { userId, token, refreshToken } = loginData.data as { userId: string; token: string; refreshToken: string };
+      setTokenToLocalStorage(token);
+      setRefreshTokenToLocalStorage(refreshToken);
+      setUserIdToLocalStorage(userId);
+      dispatch(setAuthState({ isAuthenticated: true, userId, token, refreshToken }));
+      navigate("/");
     }
     if (isError) {
       if ('data' in error) {

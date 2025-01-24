@@ -50,6 +50,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, username, password } = req.body;
+    console.log({ email, username, password });
     let user;
     if (!email && !username) {
       return res
@@ -68,35 +69,36 @@ const login = async (req, res) => {
     const refreshToken = generateRefreshToken(user);
     user.refreshToken = refreshToken;
     await user.save();
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      domain: "hive-gold.vercel.app",
-      path: "/",
-      maxAge: 60 * 60 * 1000, // 1 hour
-    });
-    res.cookie("userId", user._id, {
-      httpOnly: false,
-      secure: true,
-      sameSite: "None",
-      domain: "hive-gold.vercel.app",
-      path: "/",
-      maxAge: 60 * 60 * 1000, // 1 hour
-    });
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      domain: "hive-gold.vercel.app",
-      path: "/",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 Days
-    });
+    // res.cookie("token", token, {
+    //   httpOnly: true,
+    //   secure: true,
+    //   sameSite: "None",
+    //   domain: "hive-gold.vercel.app",
+    //   path: "/",
+    //   maxAge: 60 * 60 * 1000, // 1 hour
+    // });
+    // res.cookie("userId", user._id, {
+    //   httpOnly: false,
+    //   secure: true,
+    //   sameSite: "None",
+    //   domain: "hive-gold.vercel.app",
+    //   path: "/",
+    //   maxAge: 60 * 60 * 1000, // 1 hour
+    // });
+    // res.cookie("refreshToken", refreshToken, {
+    //   httpOnly: true,
+    //   secure: true,
+    //   sameSite: "None",
+    //   domain: "hive-gold.vercel.app",
+    //   path: "/",
+    //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 Days
+    // });
+    // console.log({ token, refreshToken, userId: user._id.toString() });
     return res
       .status(200)
       .json(
         ApiResponse.success(
-          { token, refreshToken },
+          { token, refreshToken, userId: user._id.toString() },
           "User logged in successfully"
         )
       );

@@ -1,11 +1,19 @@
 import { BASE_URL } from "@/constants";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getTokenFromLocalStorage } from "@/utils/auth";
 
 export const chatApi = createApi({
   reducerPath: "chatApi",
   baseQuery: fetchBaseQuery({
     baseUrl: `${BASE_URL}/chats`,
     credentials: "include",
+    prepareHeaders: (headers) => {
+      const token = getTokenFromLocalStorage();
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
   }),
   tagTypes: ["Chat"],
   endpoints: (builder) => ({

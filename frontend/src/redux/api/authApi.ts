@@ -15,18 +15,6 @@ export const authApi = createApi({
         method: "POST",
         body: credentials,
       }),
-      transformResponse: (response, _, error) => {
-        if (error) {
-          return {
-            success: false,
-            message: error?.data?.message || "An unexpected error occurred.",
-          };
-        }
-        return {
-          success: true,
-          data: response,
-        };
-      },
     }),
     signUp: builder.mutation({
       query: (credentials) => ({
@@ -34,18 +22,6 @@ export const authApi = createApi({
         method: "POST",
         body: credentials,
       }),
-      transformResponse: (response, _, error) => {
-        if (error) {
-          return {
-            success: false,
-            message: error?.data?.message || "An unexpected error occurred.",
-          };
-        }
-        return {
-          success: true,
-          data: response,
-        };
-      },
     }),
   }),
 });

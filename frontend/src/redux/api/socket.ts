@@ -1,11 +1,17 @@
 import io from "socket.io-client";
+import { getTokenFromLocalStorage } from "@/utils/auth";
 
-let socket:any = null;
+let socket: any = null;
+
 export const connectSocket = () => {
   if (!socket) {
+    const token = getTokenFromLocalStorage();
     socket = io("http://localhost:3003", {
       withCredentials: true,
       reconnection: true,
+      auth: {
+        authorization: token ? `Bearer ${token}` : "",
+      },
     });
   }
   return socket;

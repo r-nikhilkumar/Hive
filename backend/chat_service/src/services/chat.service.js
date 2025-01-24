@@ -1,15 +1,6 @@
 const Chat = require("../models/chat.model");
 const ChatRoom = require("../models/chatRoom.model");
-const {
-  getChatFromCache,
-  cacheChat,
-  removeChatFromCache,
-  deleteChatRoomFromCache,
-  getChatRoomsFromCache,
-  cacheChatRooms,
-  cacheChatRoom,
-  getChatRoomFromCache,
-} = require("../redis/chat.redis");
+
 
 const createMessage = async (userId, chatRoomId, message, attachments = []) => {
   // console.log("Creating message:", { userId, chatRoomId, message, attachments });
@@ -27,7 +18,7 @@ const createMessage = async (userId, chatRoomId, message, attachments = []) => {
   const savedMessage = await chatMessage.save();
 
   // Update cache
-  await cacheChat(chatRoomId, savedMessage);
+  // await cacheChat(chatRoomId, savedMessage);
 
   // console.log("Message created:", savedMessage);
   return savedMessage;
@@ -40,9 +31,9 @@ const getMessagesByChatRoom = async (chatRoomId) => {
   // }
 
   const messages = await Chat.find({ chatRoomId }).sort({ timestamp: 1 });
-  if (messages.length) {
-    await cacheChat(chatRoomId, messages);
-  }
+  // if (messages.length) {
+  //   await cacheChat(chatRoomId, messages);
+  // }
   return messages;
 };
 
@@ -60,7 +51,7 @@ const deleteMessage = async (messageId) => {
   await message.remove();
 
   // Update cache
-  await removeChatFromCache(message.chatRoomId, messageId);
+  // await removeChatFromCache(message.chatRoomId, messageId);
 
   return message;
 };
@@ -112,7 +103,7 @@ const getChatRooms = async (userId) => {
     createdAt: -1,
   });
   // I can use .lean() above to avoid _doc of mongoose
-  await cacheChatRooms(userId, chatRooms);
+  // await cacheChatRooms(userId, chatRooms);
   return chatRooms;
 };
 
@@ -123,7 +114,7 @@ const deleteChatRoom = async (chatRoomId) => {
   }
 
   await Chat.deleteMany({ chatRoomId });
-  await deleteChatRoomFromCache(chatRoomId); // Remove from cache
+  // await deleteChatRoomFromCache(chatRoomId); // Remove from cache
   await ChatRoom.findByIdAndDelete(chatRoomId);
 
   return chatRoom;
