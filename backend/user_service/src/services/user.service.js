@@ -1,14 +1,14 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
-const { getUserFromCache, cacheUser } = require("../redis/user.redis");
+// const { getUserFromCache, cacheUser } = require("../redis/user.redis");
 
 const getUserById = async (id) => {
   // let user = await getUserFromCache(id);
   // if (!user) {
-    const user = await User.findById(id).select("-password -__v -refreshToken");
-    // if (user) {
-      // await cacheUser(id, user);
-    // }
+  const user = await User.findById(id).select("-password -__v -refreshToken");
+  // if (user) {
+  // await cacheUser(id, user);
+  // }
   // }
   return user;
 };
@@ -21,7 +21,9 @@ const getUserByEmail = async (email) => {
 };
 
 const getAllUsers = async (userId) => {
-  return await User.find({ _id: { $ne: userId }}).select("-password -__v -refreshToken");
+  return await User.find({ _id: { $ne: userId } }).select(
+    "-password -__v -refreshToken"
+  );
 };
 
 const createUser = async (userDetails) => {
