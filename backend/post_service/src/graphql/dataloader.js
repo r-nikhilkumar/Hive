@@ -6,7 +6,7 @@ const createUserLoader = () =>
     async (userIds) => {
       const userPromises = userIds.map((userId) =>
         axios
-          .get(`https://hive-user:3001/get-user/${userId}`)
+          .get(`https://hive-user.onrender.com/get-user/${userId}`)
           .then((response) => {
             console.log(`Fetched user with ID ${userId}:`, response.data.data);
             return response.data.data;
