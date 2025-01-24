@@ -4,30 +4,27 @@ const axios = require("axios");
 const createUserLoader = () =>
   new DataLoader(
     async (userIds) => {
-      const userPromises = userIds.map((userId) =>
-        axios
-          .get(`https://hive-user.onrender.com/get-user/${userId}`)
-          .then((response) => {
-            console.log(`Fetched user with ID ${userId}:`, response.data.data);
-            return response.data.data;
-          })
-          .catch((error) => {
-            console.error(`Failed to fetch user with ID ${userId}:`, error);
-            return null;
-          })
-      );
+      try {
+        const response = await axios.post(`https://hive-user.onrender.com/get-users`, {
+          ids: userIds,
+        });
+        const users = response.data.data;
+        console.log(`Fetched users:`, users);
 
-      const users = await Promise.all(userPromises);
-      const userMap = users.reduce((acc, user) => {
-        if (user && user._id) {
-          acc[user._id] = user;
-        }
-        return acc;
-      }, {});
+        const userMap = users.reduce((acc, user) => {
+          if (user && user._id) {
+            acc[user._id] = user;
+          }
+          return acc;
+        }, {});
 
-      const returnUser = userIds.map((userId) => userMap[userId] || null);
-      console.log("Returning users:", returnUser);
-      return returnUser;
+        const returnUser = userIds.map((userId) => userMap[userId] || null);
+        console.log("Returning users:", returnUser);
+        return returnUser;
+      } catch (error) {
+        console.error(`Failed to fetch users:`, error.response ? error.response.data : error.message);
+        return userIds.map(() => null);
+      }
     },
     { cache: true, batch: true }
   );

@@ -47,6 +47,10 @@ const passwordVerify = async (currentpassword, realPassword) => {
   }
 };
 
+const getUsersByIds = async (ids) => {
+  return await User.find({ _id: { $in: ids } }).select("-password -__v -refreshToken");
+};
+
 module.exports = {
   createUser,
   getUserByEmail,
@@ -54,4 +58,5 @@ module.exports = {
   getUserByUsername,
   passwordVerify,
   getAllUsers,
+  getUsersByIds, // Export the new method
 };
