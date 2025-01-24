@@ -20,7 +20,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useSignInMutation } from "@/redux/api/authApi";
 import { useDispatch } from "react-redux";
 import { setAuthState } from "@/redux/slices/authSlice";
-import { getUserIdFromCookies, setRefreshTokenToLocalStorage, setTokenToLocalStorage, setUserIdToLocalStorage } from "@/utils/auth";
+import { setRefreshTokenToLocalStorage, setTokenToLocalStorage, setUserIdToLocalStorage } from "@/utils/auth";
 
 function SignInForm() {
   const [signIn, { isLoading, isSuccess, isError, error, data:loginData }] =
