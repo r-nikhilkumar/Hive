@@ -6,15 +6,7 @@ const createUserLoader = () =>
     async (userIds) => {
       const userPromises = userIds.map((userId) =>
         axios
-          .get(`https://hive-user.onrender.com/get-user/${userId}`,{
-            headers: {
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
-              'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
-              'Access-Control-Allow-Credentials': 'true',
-            }
-          })
+          .get(`https://hive-user:3001/get-user/${userId}`)
           .then((response) => {
             console.log(`Fetched user with ID ${userId}:`, response.data.data);
             return response.data.data;
