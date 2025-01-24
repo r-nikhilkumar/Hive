@@ -81,7 +81,7 @@ const getPostsApi = async (req, res) => {
       throw new Error("No posts found");
     }
     // const posts = await getPosts();
-    // console.log("Posts fetched: ", posts);
+    console.log("Posts fetched: ", posts);
     return res.status(200).json(ApiResponse.success(posts, "Posts sent"));
   } catch (error) {
     return res
