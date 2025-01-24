@@ -66,13 +66,14 @@ const getPostApi = async (req, res) => {
 
 const getPostsApi = async (req, res) => {
   try {
-    // console.log("Fetching posts...");
+    console.log("Fetching posts...");
     const result = await apolloServer.executeOperation({
       query: GET_POSTS_WITH_USER,
       context: { userLoader: createUserLoader() },
     });
 
     if (result.errors) {
+      console.error("GraphQL errors:", result.errors);
       throw new Error(result.errors[0].message);
     }
 
@@ -80,10 +81,10 @@ const getPostsApi = async (req, res) => {
     if (!posts) {
       throw new Error("No posts found");
     }
-    // const posts = await getPosts();
     console.log("Posts fetched: ", posts);
     return res.status(200).json(ApiResponse.success(posts, "Posts sent"));
   } catch (error) {
+    console.error("Error fetching posts:", error.message);
     return res
       .status(500)
       .json(ApiError.error("Failed to fetch posts", error.message));
