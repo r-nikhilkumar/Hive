@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
 
-const CHAT_MONGODB_URL="mongodb://localhost:27017/Hive-Chat"
+// const CHAT_MONGODB_URL="mongodb://localhost:27017/Hive-Chat"
+const CHAT_MONGODB_URL="mongodb+srv://thenikhilkumar11:FftYoUGz0gbIYPaa@hive-chat.k6s1c.mongodb.net/"
 
 const connectDB = async () => {
     try {

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
 
-const POST_MONGODB_URL="mongodb://localhost:27017/Hive-Post"
+// const POST_MONGODB_URL="mongodb://localhost:27017/Hive-Post"
+const POST_MONGODB_URL="mongodb+srv://thenikhilkumar11:MGNYc2shd31MTgG4@hive-post.xea0s.mongodb.net/"
 
 const connectDB = async () => {
     try {
