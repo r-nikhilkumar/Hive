@@ -9,20 +9,20 @@ const RootLayout = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   // Listen for window resize changes
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     setIsMobile(window.innerWidth <= 768);
+  //   };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  //   window.addEventListener("resize", handleResize);
+  //   return () => window.removeEventListener("resize", handleResize);
+  // }, []);
   return (
     <div className="w-full md:flex">
       <Topbar />
       <LeftSidebar />
 
-      <section className={isMobile ? "flex flex-1 pb-10" : "flex flex-1 h-full"}>
+      <section className={`flex flex-1 h-full`}>
         <Outlet />
       </section>
 

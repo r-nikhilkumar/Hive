@@ -11,8 +11,8 @@ function Home() {
     useGetUserByIdQuery(userId, { skip: !userId });
   if (isLoading || isUserDetailsLoading)
     return (
-      <div className="flex flex-1">
-        <div className="home-container">
+      <div className="home-container">
+        <div className="flex flex-1">
           <div className="home-posts">
             {Array.from({ length: 5 }).map((_, index) => (
               <PostSkeleton key={index} />
@@ -22,20 +22,20 @@ function Home() {
       </div>
     );
   return (
-    <div className="flex flex-1">
-      <div className="home-container">
+    <div className="home-container">
+      <div className="flex flex-1">
         <div className="home-posts">
-          <ul className="flex flex-col flex-1 gap-9 w-full ">
-            {postsDetails?.data?.map((post: any) => (
-              <li key={post._id} className="flex justify-center w-full">
-                <PostCard
-                  post={post}
-                  user={post.user}
-                  userDetails={userDetails?.data}
-                />
-              </li>
-            ))}
-          </ul>
+          {/* <ul className="flex flex-col gap-9"> */}
+          {postsDetails?.data?.map((post: any) => (
+            // <li key={post._id} className="flex justify-center">
+            <PostCard
+              post={post}
+              user={post.user}
+              userDetails={userDetails?.data}
+            />
+            // </li>
+          ))}
+          {/* </ul> */}
         </div>
       </div>
       {/* <div className="home-creators">
