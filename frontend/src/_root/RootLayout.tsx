@@ -3,10 +3,10 @@ import { Outlet } from "react-router-dom";
 import Topbar from "@/components/shared/Topbar";
 import Bottombar from "@/components/shared/Bottombar";
 import LeftSidebar from "@/components/shared/LeftSidebar";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 
 const RootLayout = () => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  // const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   // Listen for window resize changes
   // useEffect(() => {
