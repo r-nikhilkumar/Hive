@@ -51,15 +51,14 @@ export const postApi = createApi({
       invalidatesTags: ["Post"],
     }),
     toggleLike: builder.mutation({
-      query: ({ postId }) => ({
+      query: ({ postId, userId }) => ({
         url: `/toggle-like/${postId}`,
         method: "POST",
+        body: { userId }, // Pass userId in the body
       }),
       invalidatesTags: ["Post"],
-      onQueryStarted: async (
-        { postId, userId },
-        { dispatch, queryFulfilled }
-      ) => {
+      async onQueryStarted({ postId, userId }, { dispatch, queryFulfilled }) {
+        // console.log("toggleLike onQueryStarted called", { postId, userId });
         const patchResult = dispatch(
           postApi.util.updateQueryData("getPosts", undefined, (draft) => {
             const post = draft.data.find((post: any) => post._id === postId);
@@ -85,16 +84,21 @@ export const postApi = createApi({
       },
     }),
     toggleComment: builder.mutation({
-      query: ({ postId, comment }) => ({
+      query: ({ postId, comment, userDetails }) => ({
         url: `/toggle-comment/${postId}`,
         method: "POST",
-        body: { ...comment },
+        body: { ...comment, userDetails }, // Pass userDetails in the body
       }),
       invalidatesTags: ["Post"],
-      onQueryStarted: async (
+      async onQueryStarted(
         { postId, comment, userDetails },
         { dispatch, queryFulfilled }
-      ) => {
+      ) {
+        // console.log("toggleComment onQueryStarted called", {
+        //   postId,
+        //   comment,
+        //   userDetails,
+        // });
         const tempId = nanoid();
         const tempComment = {
           ...comment,

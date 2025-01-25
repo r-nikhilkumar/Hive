@@ -35,6 +35,7 @@ app.use(
       "http://localhost:5173",
       "http://localhost:4000",
       "https://studio.apollographql.com",
+      "https://hive-gold.vercel.app",
     ],
     credentials: true,
   })

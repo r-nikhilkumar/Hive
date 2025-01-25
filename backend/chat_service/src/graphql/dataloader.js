@@ -4,17 +4,13 @@ const axios = require("axios");
 const createUserLoader = () =>
   new DataLoader(
     async (userIds) => {
-      const userPromises = userIds.map((userId) =>
-        axios
-          .get(`http://localhost:3000/users/get-user/${userId}`)
-          .then((response) => response.data.data)
-          .catch((error) => {
-            // console.error(`Failed to fetch user with ID ${userId}:`, error);
-            return null;
-          })
+      const response = await axios.post(
+        `https://hive-user.onrender.com/get-users`,
+        {
+          ids: userIds,
+        }
       );
-
-      const users = await Promise.all(userPromises);
+      const users = response.data.data;
       const userMap = users.reduce((acc, user) => {
         if (user && user._id) {
           acc[user._id] = user;
