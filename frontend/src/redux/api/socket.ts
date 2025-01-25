@@ -6,7 +6,7 @@ let socket: any = null;
 export const connectSocket = () => {
   if (!socket) {
     const token = getTokenFromLocalStorage();
-    socket = io("http://localhost:3003", {
+    socket = io("https://hive-chat.onrender.com", {
       withCredentials: true,
       reconnection: true,
       auth: {
