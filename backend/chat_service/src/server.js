@@ -22,6 +22,7 @@ const io = new Server(server, {
       "http://localhost:4000",
       "https://studio.apollographql.com",
       "https://hive-gold.vercel.app",
+      "https://hive-gateway.onrender.com"
     ],
     credentials: true,
   },
@@ -36,6 +37,7 @@ app.use(
       "http://localhost:4000",
       "https://studio.apollographql.com",
       "https://hive-gold.vercel.app",
+      "https://hive-gateway.onrender.com"
     ],
     credentials: true,
   })

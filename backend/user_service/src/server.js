@@ -21,6 +21,7 @@ app.use(
       "https://hive-gold.vercel.app",
       "https://hive-post.onrender.com",
       "https://hive-chat.onrender.com",
+      "https://hive-gateway.onrender.com",
     ],
     credentials: true,
   })

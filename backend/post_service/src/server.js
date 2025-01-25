@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(body.urlencoded({ extended: true }));
 app.use(cors({
-  origin: ["http://localhost:5173","https://hive-gold.vercel.app"],
+  origin: ["http://localhost:5173","https://hive-gold.vercel.app", "https://hive-gateway.onrender.com"],
   credentials: true
 }))
 connetDB();

@@ -24,6 +24,8 @@ const io = new Server(server, {
       "https://hive-gold.vercel.app",
       "http://localhost:3002",
       "https://hive-post.onrender.com",
+      "https://hive-chat.onrender.com",
+      "https://hive-user.onrender.com",
       "http://localhost:3003",
       "http://localhost:3001",
     ],
