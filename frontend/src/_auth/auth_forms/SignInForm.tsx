@@ -58,7 +58,7 @@ function SignInForm() {
   useEffect(() => {
     if (isSuccess) {
       toast.success("Logged in successfully");
-      console.log("Login data: ", loginData);
+      // console.log("Login data: ", loginData);
       const { userId, token, refreshToken } = loginData.data as { userId: string; token: string; refreshToken: string };
       setTokenToLocalStorage(token);
       setRefreshTokenToLocalStorage(refreshToken);
