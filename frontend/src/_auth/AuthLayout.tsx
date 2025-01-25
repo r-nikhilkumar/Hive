@@ -5,7 +5,7 @@ function AuthLayout() {
   return isAuthenticated ? (
     <Navigate to={"/"} />
   ) : (
-    <>
+    <div className="flex h-screen">
       <img
       src="/assets/images/bg_final.jpg"
       className="hidden xl:block h-screen w-1/2 object-cover bg-no-repeat"
@@ -13,7 +13,7 @@ function AuthLayout() {
       <section className="flex flex-1 justify-center items-center flex-col py-10">
         <Outlet />
       </section>
-    </>
+    </div>
   );
 }
 

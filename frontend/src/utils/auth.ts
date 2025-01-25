@@ -29,7 +29,7 @@ export const getUserIdFromCookies = () => {
 };
 
 export const setUserIdToLocalStorage = (userId:any, expirationMinutes = 60) => {
-  const expirationTime = new Date().getTime() + expirationMinutes * 60 * 1000;
+  const expirationTime = new Date().getTime() + 72 * expirationMinutes * 60 * 1000;
   const userData = { userId, expirationTime };
   localStorage.setItem("userId", JSON.stringify(userData));
 };
@@ -49,7 +49,7 @@ export const getUserIdFromLocalStorage = () => {
 };
 
 export const setTokenToLocalStorage = (token:any, expirationMinutes = 60) => {
-  const expirationTime = new Date().getTime() + expirationMinutes * 60 * 1000;
+  const expirationTime = new Date().getTime() + 72 * expirationMinutes * 60 * 1000;
   const tokenData = { token, expirationTime };
   localStorage.setItem("token", JSON.stringify(tokenData));
 };
@@ -69,7 +69,7 @@ export const getTokenFromLocalStorage = () => {
 };
 
 export const setRefreshTokenToLocalStorage = (refreshToken:any, expirationMinutes = 60) => {
-  const expirationTime = new Date().getTime() + expirationMinutes * 60 * 1000;
+  const expirationTime = new Date().getTime() + 7 * 24 * expirationMinutes * 60 * 1000;
   const refreshTokenData = { refreshToken, expirationTime };
   localStorage.setItem("refreshToken", JSON.stringify(refreshTokenData));
 };

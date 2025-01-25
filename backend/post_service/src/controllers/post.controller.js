@@ -1,5 +1,5 @@
 const { apolloServer, createUserLoader } = require("../graphql");
-const { GET_POSTS_WITH_USER } = require("../graphql/queries");
+const { GET_POSTS_WITH_USER, GET_PULSE_WITH_USER } = require("../graphql/queries");
 const { getPostFromCache, cachePost } = require("../redis/post.redis");
 const {
   getPostById,
@@ -38,23 +38,23 @@ const getPostApi = async (req, res) => {
     // }
 
     // if (cachedPost) {
-      // return res
-      //   .status(200)
-      //   .json(ApiResponse.success(cachedPost, "Post sent from cache"));
+    // return res
+    //   .status(200)
+    //   .json(ApiResponse.success(cachedPost, "Post sent from cache"));
     // } else {
-      const post = await getPostById(postId);
+    const post = await getPostById(postId);
 
-      if (!post) {
-        return res.status(404).json(ApiError.error("Post not found"));
-      }
+    if (!post) {
+      return res.status(404).json(ApiError.error("Post not found"));
+    }
 
-      try {
-        await cachePost(postId, post);
-      } catch (cacheError) {
-        console.error("Error caching post data: ", cacheError.message);
-      }
+    try {
+      await cachePost(postId, post);
+    } catch (cacheError) {
+      console.error("Error caching post data: ", cacheError.message);
+    }
 
-      return res.status(200).json(ApiResponse.success(post, "Post sent"));
+    return res.status(200).json(ApiResponse.success(post, "Post sent"));
     // }
   } catch (error) {
     console.error("General error: ", error.message);
@@ -66,7 +66,7 @@ const getPostApi = async (req, res) => {
 
 const getPostsApi = async (req, res) => {
   try {
-    console.log("Fetching posts...");
+    // console.log("Fetching posts...");
     const result = await apolloServer.executeOperation({
       query: GET_POSTS_WITH_USER,
       context: { userLoader: createUserLoader() },
@@ -88,6 +88,33 @@ const getPostsApi = async (req, res) => {
     return res
       .status(500)
       .json(ApiError.error("Failed to fetch posts", error.message));
+  }
+};
+
+const getPulseVideosApi = async (req, res) => {
+  try {
+    // console.log("Fetching pulse...");
+    const result = await apolloServer.executeOperation({
+      query: GET_PULSE_WITH_USER,
+      context: { userLoader: createUserLoader() },
+    });
+
+    if (result.errors) {
+      console.error("GraphQL errors:", result.errors);
+      throw new Error(result.errors[0].message);
+    }
+
+    const pulse = result.data?.getPulseWithUser;
+    if (!pulse) {
+      throw new Error("No pulse found");
+    }
+    // console.log("Pulse fetched: ", pulse);
+    return res.status(200).json(ApiResponse.success(pulse, "Pulse sent"));
+  } catch (error) {
+    console.error("Error fetching pulse:", error.message);
+    return res
+      .status(500)
+      .json(ApiError.error("Failed to fetch pulse", error.message));
   }
 };
 
@@ -178,6 +205,7 @@ module.exports = {
   getUser,
   getPostApi,
   getPostsApi,
+  getPulseVideosApi,
   createPostApi,
   updatePostApi,
   deletePostApi,

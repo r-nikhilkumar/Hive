@@ -136,6 +136,10 @@ export const postApi = createApi({
         }
       },
     }),
+    getPulseVideos: builder.query({
+      query: () => "/get-pulse-videos",
+      providesTags: ['Post']
+    })
   }),
 });
 
@@ -149,4 +153,5 @@ export const {
   useDeletePostMutation,
   useToggleLikeMutation,
   useToggleCommentMutation,
+  useGetPulseVideosQuery,
 } = postApi;

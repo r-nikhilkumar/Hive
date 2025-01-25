@@ -16,10 +16,19 @@ const getPostById = async (id) => {
 
 const getPosts = async () => {
   const posts = await Post.find()
+    .sort({ date: -1 }) // Sort by date in descending order
     .select("-__v")
     .populate({ path: "comments", select: "-postId -_id -__v", options: { lean: true } }).lean()
     .populate({ path: "likes", select: "-postId -_id -__v", options: { lean: true } }).lean();
-    // console.log("service: ",posts.likes);
+  return posts;
+};
+
+const getPulse = async () => {
+  const posts = await Post.find({ content: { $elemMatch: { $regex: /\.mp4$/ } } }) // Filter posts with video content
+    .sort({ date: -1 }) // Sort by date in descending order
+    .select("-__v")
+    .populate({ path: "comments", select: "-postId -_id -__v", options: { lean: true } }).lean()
+    .populate({ path: "likes", select: "-postId -_id -__v", options: { lean: true } }).lean();
   return posts;
 };
 
@@ -130,6 +139,7 @@ const addComment = async (postId, user, comment) => {
 module.exports = {
   getPostById,
   getPosts,
+  getPulse,
   createPost,
   updatePost,
   deletePost,

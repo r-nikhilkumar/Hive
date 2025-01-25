@@ -139,7 +139,7 @@ const PostCard = ({
         <>
           <PostStats post={post} userDetails={userDetails} />
           <div className="post-out-comment">
-            <Link to={`/u/${user._id}`}>
+            <Link to={`/u/${userDetails._id}`}>
               <img
                 src={
                   userDetails.profilePic ||

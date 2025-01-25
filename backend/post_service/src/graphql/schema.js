@@ -61,6 +61,7 @@ const typeDefs = gql`
 
   type Query {
     getPostsWithUser: [Post]
+    getPulseWithUser: [Post]
   }
 
   type Mutation {
