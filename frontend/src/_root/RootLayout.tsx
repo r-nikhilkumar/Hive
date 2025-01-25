@@ -22,7 +22,7 @@ const RootLayout = () => {
       <Topbar />
       <LeftSidebar />
 
-      <section className={`flex flex-1 h-full pt-8 ${isMobile ? "pb-10" : ""}`}>
+      <section className={`flex flex-1 h-full ${isMobile ? "pt-8 pb-10" : ""}`}>
         <Outlet />
       </section>
 
