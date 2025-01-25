@@ -5,9 +5,9 @@ import { useGetUserByIdQuery } from "@/redux/api/userApi";
 import { useSelector } from "react-redux";
 
 function Home() {
-  const { data: postsDetails, isLoading } = useGetPostsQuery(null);
+  const { data: postsDetails, isFetching:isLoading } = useGetPostsQuery(null);
   const userId = useSelector((state: any) => state.auth.userId);
-  const { data: userDetails, isLoading: isUserDetailsLoading } =
+  const { data: userDetails, isFetching: isUserDetailsLoading } =
     useGetUserByIdQuery(userId, { skip: !userId });
   if (isLoading || isUserDetailsLoading)
     return (

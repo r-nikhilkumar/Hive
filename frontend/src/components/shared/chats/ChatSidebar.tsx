@@ -2,8 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import ProfileViewLinear from "../ProfileViewLinear";
 import { Input } from "@/components/ui";
 import { initializeChatRoom } from "@/redux/api/socket";
-import Loader from "../Loader";
-import { useDeleteChatRoomMutation, useGetChatRoomsQuery } from "@/redux/api/chatApi"; // Import the deleteChatRoom function
+import { HashLoader } from "react-spinners"; // Import the HashLoader component
+import {
+  useDeleteChatRoomMutation,
+  useGetChatRoomsQuery,
+} from "@/redux/api/chatApi"; // Import the deleteChatRoom function
 import OverlayScreen from "./OverlayScreen"; // Import the OverlayScreen component
 import deleteIcon from "/assets/icons/delete.svg"; // Import the delete icon
 
@@ -14,17 +17,17 @@ function ChatSidebar() {
   // Fetch chat rooms
   const {
     data: chatRooms,
-    isLoading,
+    isFetching: isLoading,
     isSuccess,
     isError,
   } = useGetChatRoomsQuery(undefined);
 
-  const [ deleteChatRoom ] = useDeleteChatRoomMutation(); // Import the deleteChatRoom mutation
+  const [deleteChatRoom] = useDeleteChatRoomMutation(); // Import the deleteChatRoom mutation
 
   // Initialize chat rooms on successful fetch
   useEffect(() => {
     if (isSuccess && chatRooms?.data.length > 0) {
-      chatRooms.data.forEach((chatRoom:any) => {
+      chatRooms.data.forEach((chatRoom: any) => {
         initializeChatRoom(chatRoom._id);
       });
     }
@@ -32,20 +35,19 @@ function ChatSidebar() {
 
   // Filter chat rooms based on search input
   const filteredChatRooms = useMemo(() => {
-    return chatRooms?.data.filter((chatRoom:any) =>
+    return chatRooms?.data.filter((chatRoom: any) =>
       chatRoom.roomName.toLowerCase().includes(searchValue.toLowerCase())
     );
   }, [searchValue, chatRooms]);
 
   // Function to handle chat room deletion
-  const handleDeleteChatRoom = (chatRoomId:any) => {
+  const handleDeleteChatRoom = (chatRoomId: any) => {
     try {
-      deleteChatRoom(chatRoomId)
+      deleteChatRoom(chatRoomId);
     } catch (error) {
       console.error("Error deleting chat room: ", error);
     }
   };
-
   return (
     <div className="chatsidebar">
       <div className="flex gap-1 px-4 w-full rounded-full bg-dark-3 mb-3">
@@ -72,11 +74,14 @@ function ChatSidebar() {
       </div>
 
       <div className="chatRoomContainer">
-        {/* Render chat rooms or loader/error */}
-        {isLoading && <Loader />}
-        {isError && <div>Error loading chat rooms</div>}
-        {isSuccess && filteredChatRooms.length > 0 ? (
-          filteredChatRooms.map((chatRoom:any) => (
+        {isLoading ? (
+          <div className="flex-center mt-5">
+            <HashLoader color="#F87171" loading={isLoading} size={40} />
+          </div>
+        ) : isError ? (
+          <div>Error loading chat rooms</div>
+        ) : isSuccess && filteredChatRooms.length > 0 ? (
+          filteredChatRooms.map((chatRoom: any) => (
             <div key={chatRoom._id} className="flex items-center gap-2">
               <ProfileViewLinear chatRoom={chatRoom} />
               <img
