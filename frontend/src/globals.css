@@ -263,7 +263,7 @@
 
   /* Topbar */
   .topbar {
-    @apply sticky top-0 z-10 md:hidden bg-dark-2 w-full;
+    @apply fixed top-0 z-10 md:hidden bg-dark-2 w-full;
   }
 
   /* User card */
