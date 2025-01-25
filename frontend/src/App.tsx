@@ -44,7 +44,7 @@ function App() {
   // if (isUserLoading) return <div className="flex justify-center items-center h-screen"><Loader/></div>; // Show loader while fetching user details
 
   return (
-    <main className="flex h-screen">
+    <main>
       <Routes>
         {/* Public Routes */}
         <Route element={<AuthLayout />}>

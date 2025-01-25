@@ -18,11 +18,11 @@ const RootLayout = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
   return (
-    <div className="w-full md:flex">
+    <div className="md:flex md:h-screen">
       <Topbar />
       <LeftSidebar />
 
-      <section className={`flex flex-1 h-full ${isMobile ? "pt-8 pb-10" : ""}`}>
+      <section className={`flex flex-1 h-full ${isMobile ? "pt-8 pb-9" : ""}`}>
         <Outlet />
       </section>
 
