@@ -4,8 +4,7 @@ import { useGetUsersQuery } from "@/redux/api/userApi";
 import { useUploadFilesMutation } from "@/redux/api/commonApi";
 import { useCreateChatRoomMutation } from "@/redux/api/chatApi";
 
-
-function OverlayScreen(onClose:any) {
+function OverlayScreen({ onClose }: { onClose: () => void }) {
   const [selectedUsers, setSelectedUsers] = useState<any[]>([]);
   const [groupName, setGroupName] = useState("");
   const [groupPic, setGroupPic] = useState(null);

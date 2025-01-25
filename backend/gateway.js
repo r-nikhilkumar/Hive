@@ -72,7 +72,7 @@ app.use(
 app.use(
   "/chats",
   createProxyMiddleware({
-    target: `http://localhost:${process.env.CHAT_PORT}`,
+    target: `https://hive-chat.onrender.com`,
     changeOrigin: true,
     ws: true,
   })

@@ -20,6 +20,7 @@ app.use(
       "http://localhost:3003",
       "https://hive-gold.vercel.app",
       "https://hive-post.onrender.com",
+      "https://hive-chat.onrender.com",
     ],
     credentials: true,
   })
