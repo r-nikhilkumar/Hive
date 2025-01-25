@@ -11,8 +11,8 @@ function Home() {
     useGetUserByIdQuery(userId, { skip: !userId });
   if (isLoading || isUserDetailsLoading)
     return (
-      <div className="home-container">
-        <div className="flex flex-1">
+      <div className="flex flex-1">
+        <div className="home-container">
           <div className="home-posts">
             {Array.from({ length: 5 }).map((_, index) => (
               <PostSkeleton key={index} />
