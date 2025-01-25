@@ -5,7 +5,7 @@ const createUserLoader = () =>
   new DataLoader(
     async (userIds) => {
       try {
-        console.log(`Fetching users with IDs in dataloader: `, userIds);
+        // console.log(`Fetching users with IDs in dataloader: `, userIds);
         const response = await axios.post(`https://hive-user.onrender.com/get-users`, {
           ids: userIds,
         });
@@ -20,7 +20,7 @@ const createUserLoader = () =>
         }, {});
 
         const returnUser = userIds.map((userId) => userMap[userId] || null);
-        console.log("Returning users:", returnUser);
+        // console.log("Returning users:", returnUser);
         return returnUser;
       } catch (error) {
         console.error(`Failed to fetch users:`, error.response ? error.response.data : error.message);
