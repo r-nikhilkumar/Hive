@@ -19,6 +19,7 @@ import "./globals.css";
 import Notifications from "./_root/pages/Notifications";
 import { connectSocket } from "./redux/api/socket";
 import { useSelector } from "react-redux";
+import NotFound from "./components/NotFound"; // Import the NotFound component
 
 function App() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -71,6 +72,9 @@ function App() {
             <Route path="/u/:id" element={<Profile />} />
           </Route>
         </Route>
+
+        {/* 404 Not Found Route */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </main>
   );
