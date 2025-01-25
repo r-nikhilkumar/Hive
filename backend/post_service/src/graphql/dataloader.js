@@ -5,7 +5,8 @@ const createUserLoader = () =>
   new DataLoader(
     async (userIds) => {
       try {
-        const response = await axios.post(`https://hive-user.onrender.com/get-users`, {
+        console.log(`Fetching users with IDs in dataloader: `, userIds);
+        const response = await axios.post(`http://localhost:3000/users/get-users`, {
           ids: userIds,
         });
         const users = response.data.data;

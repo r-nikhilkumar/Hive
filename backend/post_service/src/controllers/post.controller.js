@@ -29,19 +29,19 @@ const getPostApi = async (req, res) => {
   try {
     const postId = req.params.id;
 
-    let cachedPost;
+    // let cachedPost;
 
-    try {
-      cachedPost = await getPostFromCache(postId);
-    } catch (cacheError) {
-      console.error("Cache error: ", cacheError.message);
-    }
+    // try {
+    //   // cachedPost = await getPostFromCache(postId);
+    // } catch (cacheError) {
+    //   console.error("Cache error: ", cacheError.message);
+    // }
 
-    if (cachedPost) {
-      return res
-        .status(200)
-        .json(ApiResponse.success(cachedPost, "Post sent from cache"));
-    } else {
+    // if (cachedPost) {
+      // return res
+      //   .status(200)
+      //   .json(ApiResponse.success(cachedPost, "Post sent from cache"));
+    // } else {
       const post = await getPostById(postId);
 
       if (!post) {
@@ -55,7 +55,7 @@ const getPostApi = async (req, res) => {
       }
 
       return res.status(200).json(ApiResponse.success(post, "Post sent"));
-    }
+    // }
   } catch (error) {
     console.error("General error: ", error.message);
     return res
@@ -81,7 +81,7 @@ const getPostsApi = async (req, res) => {
     if (!posts) {
       throw new Error("No posts found");
     }
-    console.log("Posts fetched: ", posts);
+    // console.log("Posts fetched: ", posts);
     return res.status(200).json(ApiResponse.success(posts, "Posts sent"));
   } catch (error) {
     console.error("Error fetching posts:", error.message);

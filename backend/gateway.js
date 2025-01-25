@@ -5,7 +5,9 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const http = require("http");
 const { Server } = require("socket.io");
 const { createAdapter } = require("@socket.io/redis-adapter");
-const { uploadFilesApi } = require("./srcCommon/controllerCommon/uploadFilesApi");
+const {
+  uploadFilesApi,
+} = require("./srcCommon/controllerCommon/uploadFilesApi");
 const multer = require("multer");
 const upload = multer({ dest: "./temp/upload/" });
 const cookieParser = require("cookie-parser");
@@ -17,7 +19,14 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173", "https://hive-gold.vercel.app"],
+    origin: [
+      "http://localhost:5173",
+      "https://hive-gold.vercel.app",
+      "http://localhost:3002",
+      "https://hive-post.onrender.com",
+      "http://localhost:3003",
+      "http://localhost:3001",
+    ],
     credentials: true,
   },
 });
@@ -39,7 +48,6 @@ app.use(
   })
 );
 
-
 app.get("/", (req, res) => {
   return res.send({ message: "Welcome to the gateway!" });
 });
@@ -50,7 +58,7 @@ app.post("/upload", upload.array("files"), uploadFilesApi);
 app.use(
   "/users",
   createProxyMiddleware({
-    target: `http://localhost:${process.env.USER_PORT}`,
+    target: `https://hive-user.onrender.com`,
     changeOrigin: true,
   })
 );
