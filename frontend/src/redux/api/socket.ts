@@ -1,12 +1,13 @@
 import io from "socket.io-client";
 import { getTokenFromLocalStorage } from "@/utils/auth";
+import { CHAT_URL } from "@/constants";
 
 let socket: any = null;
 
 export const connectSocket = () => {
   if (!socket) {
     const token = getTokenFromLocalStorage();
-    socket = io("https://hive-chat.onrender.com", {
+    socket = io(CHAT_URL, {
       withCredentials: true,
       reconnection: true,
       auth: {

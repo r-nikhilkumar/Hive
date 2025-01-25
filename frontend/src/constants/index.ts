@@ -67,3 +67,5 @@ export const bottombarLinks = [
 
 // export const BASE_URL = "http://localhost:3000";
 export const BASE_URL = "https://hive-gateway.onrender.com";
+export const CHAT_URL = "https://hive-chat.onrender.com";
+
