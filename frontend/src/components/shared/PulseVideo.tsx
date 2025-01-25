@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { useToggleCommentMutation } from "@/redux/api/postApi";
 import { FaVolumeMute, FaVolumeUp } from "react-icons/fa";
 
-export const PulseVideo = ({ src, video, userDetails, isMuted, setIsMuted }: { src: any; video: any; userDetails: any; isMuted:any; setIsMuted:()=>void }) => {
+export const PulseVideo = ({ src, video, userDetails, isMuted, setIsMuted }: { src: any; video: any; userDetails: any; isMuted: boolean; setIsMuted: (value: boolean) => void; }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [showMore, setShowMore] = useState(false);
   const [isOverlayVisible, setIsOverlayVisible] = useState(true);
@@ -38,7 +38,7 @@ export const PulseVideo = ({ src, video, userDetails, isMuted, setIsMuted }: { s
   }, [inView]);
 
   const toggleMute = () => {
-    setIsMuted((prev) => !prev);
+    setIsMuted(!isMuted);
     if (videoRef.current) {
       videoRef.current.muted = !videoRef.current.muted;
     }
