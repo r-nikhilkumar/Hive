@@ -65,7 +65,7 @@ app.use(
 app.use(
   "/posts",
   createProxyMiddleware({
-    target: `http://localhost:${process.env.POST_PORT}`,
+    target: `https://hive-post.onrender.com`,
     changeOrigin: true,
   })
 );
