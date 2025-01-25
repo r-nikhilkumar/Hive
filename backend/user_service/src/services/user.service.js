@@ -21,7 +21,7 @@ const getUserByEmail = async (email) => {
 };
 
 const getAllUsers = async (userId) => {
-  console.log("inside getAll users userId: ", userId);
+  // console.log("inside getAll users userId: ", userId);
   return await User.find({ _id: { $ne: userId } }).select(
     "-password -__v -refreshToken"
   );
