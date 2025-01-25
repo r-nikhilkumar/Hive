@@ -61,7 +61,7 @@ const getAllUsersController = async (req, res) => {
 const getUsers = async (req, res) => {
   try {
     const userIds = req.body.ids; // Expecting an array of user IDs in the request body
-    console.log("Users: ", userIds);
+    // console.log("Users: ", userIds);
     const users = await getUsersByIds(userIds);
 
     if (!users || users.length === 0) {

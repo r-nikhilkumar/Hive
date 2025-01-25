@@ -26,7 +26,7 @@ const getAllPosts = async (userLoader) => {
     ]),
   ];
 
-  console.log("UserIds: ",userIds);
+  // console.log("UserIds: ",userIds);
 
   const users = await getUsers(userIds, userLoader);
   // console.log("Users: ",users);
