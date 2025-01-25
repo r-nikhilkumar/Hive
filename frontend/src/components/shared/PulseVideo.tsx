@@ -101,7 +101,7 @@ export const PulseVideo = ({ src, video, userDetails, isMuted, setIsMuted }: { s
 
       {/* Bottom Overlay Content */}
       {isOverlayVisible && (
-        <div className="absolute bottom-16 md:bottom-4 w-[320px] md:w-[360px] text-white text-sm md:text-base p-4 rounded-md">
+        <div className="absolute bottom-20 md:bottom-4 w-[320px] md:w-[360px] text-white text-sm md:text-base p-4 rounded-md">
           <div
             className={`font-medium right-5 ${showMore ? "max-h-24 overflow-y-scroll no-scrollbar bg-black bg-opacity-40 " : "line-clamp-2"} overflow-hidden`}
           >
