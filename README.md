@@ -87,9 +87,22 @@ Below are the key dependencies required for running the project:
    - Create a `.env` file in the root directory of the **backend** and configure the following:
      ```env
      PORT=3000
-     MONGO_URI=mongodb://localhost:27017/hive
+     USER_PORT=3001
+     POST_PORT=3002
+     CHAT_PORT=3003
+     USER_MONGO_URI=mongodb://localhost:27017/hive-user
+     CHAT_MONGO_URI=mongodb://localhost:27017/hive-chat
+     POST_MONGO_URI=mongodb://localhost:27017/hive-post
      REDIS_URL=redis://localhost:6379
-     JWT_SECRET=your_jwt_secret
+     JWT_SECRET_KEY="hiveisheretoconnect"
+     JWT_REFRESH_SECRET="hiveisheretoconnectAgainAndAgain"
+     REDIS_USERNAME=<put_here_yours_one>
+     REDIS_PASSWORD=<put_here_yours_one>
+     REDIS_HOST=<put_here_yours_one>
+     REDIS_PORT=11857
+     CLOUDINARY_CLOUD_NAME=<put_here_yours_one>
+     CLOUDINARY_API_KEY=<put_here_yours_one>
+     CLOUDINARY_API_SECRET=<put_here_yours_one>
      ```
 
 4. Start the services using Docker Compose:
@@ -107,7 +120,7 @@ Below are the key dependencies required for running the project:
    - Start the frontend:
      ```bash
      cd frontend
-     npm start
+     npm run dev
      ```
 
 ---
@@ -152,7 +165,6 @@ Below are the key dependencies required for running the project:
 ### **Other Tools**
 - WebSocket (for real-time communication)
 - RabbitMQ (message queues)
-- Prometheus & Grafana (monitoring and observability)
 
 ---
 
