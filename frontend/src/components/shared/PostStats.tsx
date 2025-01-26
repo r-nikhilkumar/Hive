@@ -88,7 +88,7 @@ const PostStats = ({ post, userDetails }: PostStatsProps) => {
         />
       </div>
       <Overlay isVisible={isOverlayVisible} onClose={() => setOverlayVisible(false)}>
-        <div className="p-4 bg-dark-3 border border-2 border-dark-4 rounded">
+        <div className="p-4 bg-dark-3 border-2 border-dark-4 rounded">
           <h2 className="text-lg font-semibold mb-4">Comments</h2>
           <div className="overflow-y-auto max-h-96 custom-scrollbar">
           {post.comments.comments.map((comment: any) => (

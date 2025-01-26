@@ -27,8 +27,6 @@ const LeftSidebar = () => {
     // Automatically collapse the sidebar when on the "Chats" page
     if (pathname === "/chats" || pathname === "/pulse") {
       setIsCollapsed(true);
-    }else{
-      setIsCollapsed(false);
     }
   }, [pathname]);
 

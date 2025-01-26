@@ -6,6 +6,8 @@ import { GridPostList } from "@/components/shared";
 import { useGetPostsQuery } from "@/redux/api/postApi";
 import { useSelector } from "react-redux";
 import { useGetUserByIdQuery } from "@/redux/api/userApi";
+import Lottie from "lottie-react";
+import normalloader from '../../../public/assets/animations/normalloader.json'
 
 export type SearchResultProps = {
   isSearchFetching: boolean;
@@ -32,9 +34,10 @@ const Explore = () => {
   const {
     data: postsDetails,
     isSuccess,
+    isLoading:isPostsLoading,
   } = useGetPostsQuery(null);
   const userId = useSelector((state:any) => state.auth.userId);
-  const { data: userDetails, isSuccess:isUserDetailsSuccess} = useGetUserByIdQuery(userId, {skip: !userId});
+  const { data: userDetails, isSuccess:isUserDetailsSuccess, isLoading:isUserDetailsLoading} = useGetUserByIdQuery(userId, {skip: !userId});
 
   return (
     <div className="explore-container">
@@ -60,7 +63,7 @@ const Explore = () => {
         </div>
       </div>
 
-      <div className="flex-between w-full max-w-5xl mt-16 mb-7">
+      <div className="flex-between w-full max-w-5xl mt-6 mb-6">
         <h3 className="body-bold md:h3-bold">Popular Today</h3>
 
         <div className="flex-center gap-3 bg-dark-3 rounded-xl px-4 py-2 cursor-pointer">
@@ -73,8 +76,15 @@ const Explore = () => {
           />
         </div>
       </div>
+      {
+        (isPostsLoading || isUserDetailsLoading) && (
+          <div className="flex justify-center h-52 w-52">
+            <Lottie animationData={normalloader} loop={true}/>
+          </div>
+        )
+      }
 
-      <div className="flex flex-wrap gap-9 w-full max-w-5xl">       
+      <div className="flex flex-wrap gap-9 w-full max-w-5xl"> 
         {isSuccess && isUserDetailsSuccess && <GridPostList posts={postsDetails?.data}  user={userDetails?.data}/>}
       </div>
     </div>

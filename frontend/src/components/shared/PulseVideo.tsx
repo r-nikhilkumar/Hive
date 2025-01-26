@@ -93,7 +93,7 @@ export const PulseVideo = ({ src, video, userDetails, isMuted, setIsMuted }: { s
       <video
         ref={videoRef}
         src={src}
-        className="w-full h-screen max-w-[360px] md:max-w-[400px] object-cover rounded-md"
+        className="w-full h-screen md:max-w-[560px] object-cover rounded-md"
         muted={isMuted}
         loop
         playsInline
@@ -101,7 +101,7 @@ export const PulseVideo = ({ src, video, userDetails, isMuted, setIsMuted }: { s
 
       {/* Bottom Overlay Content */}
       {isOverlayVisible && (
-        <div className="absolute bottom-20 md:bottom-4 w-[320px] md:w-[360px] text-white text-sm md:text-base p-4 rounded-md">
+        <div className="absolute bottom-20 md:bottom-4 w-full px-5 md:w-[540px] text-white text-sm md:text-base p-4 rounded-md">
           <div
             className={`font-medium right-5 ${showMore ? "max-h-24 overflow-y-scroll no-scrollbar bg-black bg-opacity-40 " : "line-clamp-2"} overflow-hidden`}
           >
@@ -132,10 +132,10 @@ export const PulseVideo = ({ src, video, userDetails, isMuted, setIsMuted }: { s
             <>
               <PostStats post={video} userDetails={userDetails} />
               <div className="post-out-comment">
-                <Link to={`/u/${userDetails._id}`}>
+                <Link to={`/u/${video.user._id}`}>
                   <img
                     src={
-                      userDetails.profilePic ||
+                      video.user.profilePic ||
                       "/assets/icons/profile-placeholder.svg"
                     }
                     alt="user"
