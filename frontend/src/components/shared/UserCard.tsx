@@ -4,9 +4,9 @@ import { Button } from "../ui/button";
 
 const UserCard = ({user}:{user:any}) => {
   return (
-    <Link to={`/u/${user.id}`} className="user-card">
+    <Link to={`/u/${user._id}`} className="user-card">
       <img
-        src={user.imageUrl || "/assets/icons/profile-placeholder.svg"}
+        src={user.profilePic || "/assets/icons/profile-placeholder.svg"}
         alt="creator"
         className="rounded-full w-14 h-14"
       />
