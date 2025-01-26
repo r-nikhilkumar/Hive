@@ -11,8 +11,8 @@ function Home() {
   const userId = useSelector((state: any) => state.auth.userId);
   const { data: userDetails, isFetching: isUserDetailsLoading } =
     useGetUserByIdQuery(userId, { skip: !userId });
-  const { data: allUsers } = useGetUsersQuery(undefined);
-  if (isLoading || isUserDetailsLoading)
+  const { data: allUsers, isLoading: isAllUsers } = useGetUsersQuery(undefined);
+  if (isLoading || isUserDetailsLoading || isAllUsers)
     return (
       <div className="flex flex-1">
         <div className="home-container">
