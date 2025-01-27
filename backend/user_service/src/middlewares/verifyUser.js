@@ -1,6 +1,9 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
 
+const JWT_SECRET_KEY="hiveisheretoconnect"
+const JWT_REFRESH_SECRET="hiveisheretoconnectAgainAndAgain"
+
 const verifyUser = async (req, res, next) => {
   let token = req.cookies.token;
   if(!token) {
@@ -11,7 +14,7 @@ const verifyUser = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY || JWT_SECRET_KEY);
     const user = await User.findById(decoded.id);
     if (!user) {
       throw new Error("User not found");
