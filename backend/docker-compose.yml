@@ -2,9 +2,11 @@ version: '3.8'
 
 services:
   gateway:
-    build: .
+    image: nikhilkumar12/hive-gateway
     ports:
       - "3000:3000"
+    env_file:
+      - .env
     environment:
       - PORT=3000
       - USER_PORT=3001
@@ -17,26 +19,29 @@ services:
       # - redis
 
   users:
-    build:
-      context: ./user_service
+    image: nikhilkumar12/hive-user-service
     ports:
       - "3001:3001"
+    env_file:
+      - .env
     environment:
       - PORT=3001
 
   posts:
-    build:
-      context: ./post_service
+    image: nikhilkumar12/hive-post-service
     ports:
       - "3002:3002"
+    env_file:
+      - .env
     environment:
       - PORT=3002
 
   chats:
-    build:
-      context: ./chat_service
+    image: nikhilkumar12/hive-chat-service
     ports:
       - "3003:3003"
+    env_file:
+      - .env
     environment:
       - PORT=3003
 
