@@ -1,41 +1,24 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { FileWithPath, useDropzone } from "react-dropzone";
 
 import { Button } from "@/components/ui";
-import { convertFileToUrl } from "@/lib/utils";
 
 type FileUploaderProps = {
   fieldChange: (files: File[]) => void;
-  mediaUrls: string[];
-  mainFile: File | null;
-  setMainFile: (file: File) => void;
+  mainFile: File | string | null;
+  setMainFile: (file: File | string) => void;
 };
 
-const FileUploader = ({ fieldChange, mediaUrls, mainFile, setMainFile }: FileUploaderProps) => {
-  const [files, setFiles] = useState<File[]>([]);
-  const [fileUrls, setFileUrls] = useState<string[]>(mediaUrls || []);
-  console.log("fileUrls", fileUrls);
-
+const FileUploader = ({ fieldChange, mainFile, setMainFile }: FileUploaderProps) => {
   const onDrop = useCallback(
     (acceptedFiles: FileWithPath[]) => {
-      const imageFiles = acceptedFiles.filter(file => file.type.startsWith("image/"));
-      const videoFiles = acceptedFiles.filter(file => file.type.startsWith("video/"));
-
-      if (videoFiles.length > 1) {
-        alert("You can only upload one video.");
-        return;
-      }
-
-      const newFiles = [...imageFiles, ...videoFiles];
-      setFiles(newFiles);
+      const newFiles = [...acceptedFiles];
       fieldChange(newFiles);
-      const newFileUrls = newFiles.map(file => convertFileToUrl(file));
-      setFileUrls(newFileUrls);
       if (newFiles.length > 0 && !mainFile) {
         setMainFile(newFiles[0]);
       }
     },
-    [files, mainFile]
+    [mainFile]
   );
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -46,8 +29,6 @@ const FileUploader = ({ fieldChange, mediaUrls, mainFile, setMainFile }: FileUpl
     },
   });
 
-  // console.log(mainFile)
-
   return (
     <div
       {...getRootProps()}
@@ -57,10 +38,19 @@ const FileUploader = ({ fieldChange, mediaUrls, mainFile, setMainFile }: FileUpl
       {mainFile ? (
         <>
           <div className="flex flex-1 justify-center w-full p-5 lg:p-10">
-            {mainFile.type.startsWith("image/") ? (
-              <img src={URL.createObjectURL(mainFile)} alt="image" className="file_uploader-img" />
+            {typeof mainFile === "string" ? (
+              mainFile.endsWith(".mp4") ? (
+                <video controls className="file_uploader-img w-full h-64 object-cover">
+                  <source src={mainFile} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <img src={mainFile} alt="image" className="file_uploader-img w-full h-64 object-cover" />
+              )
+            ) : mainFile.type.startsWith("image/") ? (
+              <img src={URL.createObjectURL(mainFile)} alt="image" className="file_uploader-img w-full h-64 object-cover" />
             ) : (
-              <video controls className="file_uploader-img">
+              <video controls className="file_uploader-img w-full h-64 object-cover">
                 <source src={URL.createObjectURL(mainFile)} type={mainFile.type} />
                 Your browser does not support the video tag.
               </video>

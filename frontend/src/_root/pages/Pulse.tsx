@@ -65,14 +65,18 @@ const Pulse = () => {
         className="overflow-y-scroll h-screen snap-y snap-mandatory bg-dark-3 no-scrollbar relative"
       >
         {data?.data?.map((video: any, index: number) => (
-          <PulseVideo
-            key={index}
-            src={video.content[0]}
-            video={video}
-            userDetails={userDetails.data}
-            isMuted={isMuted}
-            setIsMuted={setIsMuted}
-          />
+          video.content.map((contentUrl: string, contentIndex: number) => (
+            contentUrl.endsWith(".mp4") && (
+              <PulseVideo
+                key={`${index}-${contentIndex}`}
+                src={contentUrl}
+                video={video}
+                userDetails={userDetails.data}
+                isMuted={isMuted}
+                setIsMuted={setIsMuted}
+              />
+            )
+          ))
         ))}
       </div>
     </div>

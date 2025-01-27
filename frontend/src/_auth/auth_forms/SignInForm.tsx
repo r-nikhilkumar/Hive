@@ -64,7 +64,9 @@ function SignInForm() {
       setRefreshTokenToLocalStorage(refreshToken);
       setUserIdToLocalStorage(userId);
       dispatch(setAuthState({ isAuthenticated: true, userId, token, refreshToken }));
-      navigate("/");
+      setTimeout(()=>{
+        navigate("/");
+      }, 1000)
     }
     if (isError) {
       if ('data' in error) {

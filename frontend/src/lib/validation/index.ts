@@ -32,7 +32,7 @@ export const PostValidation = z.object({
     .string()
     .min(5, { message: "Minimum 5 characters." })
     .max(2200, { message: "Maximum 2,200 caracters" }),
-  file: z.custom<File[]>(),
+  file: z.custom<(File | string)[]>(),
   location: z
     .string()
     .min(1, { message: "This field is required" })

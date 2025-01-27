@@ -20,6 +20,7 @@ import Notifications from "./_root/pages/Notifications";
 import { connectSocket } from "./redux/api/socket";
 import { useSelector } from "react-redux";
 import NotFound from "./components/NotFound"; // Import the NotFound component
+import EditPost from "./_root/pages/EditPost";
 
 function App() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -67,6 +68,7 @@ function App() {
             {/* For Mobile, ChatScreen directly */}
             {isMobile && <Route path="/chats/:id" element={<ChatScreen />} />}
             <Route path="/create-post" element={<CreatePost />} />
+            <Route path="/update-post/:id" element={<EditPost />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/notification" element={<Notifications />} />
             <Route path="/u/:id" element={<Profile />} />

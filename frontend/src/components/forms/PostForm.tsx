@@ -20,6 +20,8 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { useUploadFilesMutation } from "@/redux/api/commonApi";
 import { useCreatePostMutation, useUpdatePostMutation } from "@/redux/api/postApi";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 type PostFormProps = {
   post?: any;
@@ -28,31 +30,25 @@ type PostFormProps = {
 
 const PostForm = ({ post, action }: PostFormProps) => {
   const navigate = useNavigate();
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [mainFile, setMainFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<(File | string)[]>([]);
+  const [mainFile, setMainFile] = useState<File | string | null>(null);
   const [uploadFiles, {isLoading: isUploadLoading}] = useUploadFilesMutation();
-  const [createPost, {isLoading: iscreateLoading}] = useCreatePostMutation();
-  const [updatePost, { isLoading: isUpdateLoading }] = useUpdatePostMutation();
+  const [createPost, {isLoading: iscreateLoading, isSuccess:isCreatedPost, isError:isErrorCP, error:createPostError}] = useCreatePostMutation();
+  const [updatePost, { isLoading: isUpdateLoading, isSuccess:isUpdatedPost, isError:isErrorUP, error:updatePostError }] = useUpdatePostMutation();
   const form = useForm<z.infer<typeof PostValidation>>({
     resolver: zodResolver(PostValidation),
     defaultValues: {
-      caption: post ? post?.caption : "",
+      caption: post ? post?.description : "",
       file: [],
       location: post ? post.location : "",
       tags: post ? post.tags.join(",") : "",
     },
   });
 
-
   useEffect(() => {
-    if (post && post.mediaUrls) {
-      const mediaFiles = post.mediaUrls.map((url: string) => {
-        const file = new File([], url);
-        Object.defineProperty(file, 'name', { value: url });
-        return file;
-      });
-      setSelectedFiles(mediaFiles);
-      setMainFile(mediaFiles[0]);
+    if (post && Array.isArray(post.content)) {
+      setSelectedFiles(post.content);
+      setMainFile(post.content[0]);
     }
   }, [post]);
 
@@ -64,37 +60,87 @@ const PostForm = ({ post, action }: PostFormProps) => {
     }
   };
 
-  const handleCarouselClick = (file: File) => {
+  const handleCarouselClick = (file: File | string) => {
     setMainFile(file);
   };
 
-  const handleRemoveFile = (file: File) => {
-    setSelectedFiles(prevFiles => prevFiles.filter(f => f !== file));
-    form.setValue("file", selectedFiles.filter(f => f !== file));
+  useEffect(()=>{
+    if(action=="Create"){
+      if(isCreatedPost){
+        toast.success("Post Created Successfully");
+        setTimeout(()=>{
+          navigate('/');
+        }, 2000)
+      }else if(isErrorCP){
+        if ('data' in createPostError) {
+          toast.error((createPostError as any).data?.message || "An error occurred");
+        } else {
+          toast.error("An error occurred");
+        }
+      }
+    }
+    else if(action=="Update"){
+      if(isUpdatedPost){
+        toast.success("Post Updated Successfully");
+        setTimeout(()=>{
+          navigate('/');
+        }, 2000)
+      }else if(isErrorUP){
+        if ('data' in updatePostError) {
+          toast.error((updatePostError as any).data?.message || "An error occurred");
+        } else {
+          toast.error("An error occurred");
+        }
+      }
+    }
+  }, [isCreatedPost, isUpdatedPost, isErrorCP, isErrorUP])
+
+  const handleRemoveFile = (file: File | string) => {
+    const updatedFiles = selectedFiles.filter(f => {
+      if (typeof f === "string" && typeof file === "string") {
+        return f !== file; // For string comparison
+      }
+      if (f instanceof File && file instanceof File) {
+        return f.name !== file.name || f.size !== file.size; // Compare File properties
+      }
+      return true; // Keep the file if the types don't match
+    });
+  
+    setSelectedFiles(updatedFiles);
+    console.log(updatedFiles);
+    // form.setValue("file", updatedFiles);
+    console.log("selected: ",selectedFiles)
+    console.log("updated: ",updatedFiles)
+  
     if (mainFile === file) {
-      setMainFile(selectedFiles[0] || null);
+      setMainFile(updatedFiles[0] || null); // Update mainFile if it was removed
     }
   };
+  
 
   const handleSubmit = async (value: z.infer<typeof PostValidation>) => {
     try {
-      let content = post?.mediaUrls || [];
+      let content: string[] = [];
       let contentType = post?.content_type || "image";
 
-      if (selectedFiles.length > 0 && selectedFiles[0].name !== post?.mediaUrls[0]) {
+      const newFiles = selectedFiles.filter(file => file instanceof File) as File[];
+      if (newFiles.length > 0) {
         const formData = new FormData();
-        selectedFiles.forEach(file => {
-          if (!post?.mediaUrls.includes(file.name)) {
-            formData.append("files", file);
-          }
+        newFiles.forEach(file => {
+          formData.append("files", file);
         });
 
         const uploadedUrls = await uploadFiles(formData).unwrap();
-        if(uploadedUrls.status !== "success") throw new Error("Failed to upload files");
+        if (uploadedUrls.status !== "success") throw new Error("Failed to upload files");
         const newUrls = uploadedUrls.data.map((url: { url: string, name: string, type: string }) => url.url);
         content = [...newUrls];
         contentType = uploadedUrls.data.length === 1 && uploadedUrls.data[0].type.startsWith("/video") ? "video" : "image";
       }
+
+      // Include existing URLs that were not removed
+      const existingUrls = selectedFiles.filter(file => typeof file === "string") as string[];
+      content = [...content, ...existingUrls];
+      if(content.length<=0) {toast.warning("Must select atleast one file"); return;}
 
       const postData = {
         location: value.location,
@@ -103,16 +149,14 @@ const PostForm = ({ post, action }: PostFormProps) => {
         content,
         content_type: contentType,
       };
-
       if (action === "Create") {
-        await createPost(postData);
+        createPost(postData);
       } else if (action === "Update") {
-        await updatePost({ postData, postId: post._id });
+        updatePost({ postData, postId: post._id });
       }
-
-      navigate("/");
     } catch (error) {
       console.error("error: ", error);
+      toast.error("Failed to submit post");
     }
   };
 
@@ -147,7 +191,6 @@ const PostForm = ({ post, action }: PostFormProps) => {
               <FormControl>
                 <FileUploader
                   fieldChange={handleFileChange}
-                  mediaUrls={post?.mediaUrls || []}
                   mainFile={mainFile}
                   setMainFile={setMainFile}
                 />
@@ -204,14 +247,27 @@ const PostForm = ({ post, action }: PostFormProps) => {
                   >
                     {selectedFiles.map((file, index) => (
                       <div key={index} className="relative p-2" onClick={() => handleCarouselClick(file)}>
-                        {file.type.startsWith("image/") ? (
+                        {typeof file === "string" ? (
+                          file.endsWith(".mp4") ? (
+                            <video controls className="w-full h-64 object-cover cursor-pointer">
+                              <source src={file} type="video/mp4" />
+                              Your browser does not support the video tag.
+                            </video>
+                          ) : (
+                            <img
+                              src={file}
+                              alt={`media-${index}`}
+                              className="w-full h-64 object-cover cursor-pointer"
+                            />
+                          )
+                        ) : file.type.startsWith("image/") ? (
                           <img
                             src={URL.createObjectURL(file)}
                             alt={file.name}
-                            className="w-full h-auto object-cover cursor-pointer"
+                            className="w-full h-64 object-cover cursor-pointer"
                           />
                         ) : (
-                          <video controls className="w-full h-auto object-cover cursor-pointer">
+                          <video controls className="w-full h-64 object-cover cursor-pointer">
                             <source src={URL.createObjectURL(file)} type={file.type} />
                             Your browser does not support the video tag.
                           </video>
@@ -284,6 +340,7 @@ const PostForm = ({ post, action }: PostFormProps) => {
           </Button>
         </div>
       </form>
+      <ToastContainer/>
     </Form>
   );
 };
