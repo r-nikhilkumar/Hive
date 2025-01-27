@@ -4,8 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "concurrently \"node gateway.js\" \"node user_service/src/server.js\" \"node post_service/src/server.js\" \"node chat_service/src/server.js\"",
-    "dev": "concurrently \"nodemon gateway.js\" \"nodemon user_service/src/server.js\" \"nodemon post_service/src/server.js\" \"nodemon chat_service/src/server.js\""
+    "start": "concurrently \"node gateway.js\" \"node ../user_service/src/server.js\" \"node ../post_service/src/server.js\" \"node ../chat_service/src/server.js\"",
+    "dev": "concurrently \"nodemon gateway.js\" \"nodemon ../user_service/src/server.js\" \"nodemon ../post_service/src/server.js\" \"nodemon ../chat_service/src/server.js\""
   },
   "author": "",
   "license": "ISC",

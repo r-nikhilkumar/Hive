@@ -9,7 +9,7 @@ const {
   uploadFilesApi,
 } = require("./srcCommon/controllerCommon/uploadFilesApi");
 const multer = require("multer");
-const upload = multer({ dest: "./temp/upload/" });
+const upload = multer({ dest: "../temp/upload" });
 const cookieParser = require("cookie-parser");
 const client = require("./config/redis");
 
