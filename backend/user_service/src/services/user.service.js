@@ -14,10 +14,13 @@ const getUserById = async (id) => {
 };
 
 const getUserByUsername = async (username) => {
-  return await User.findOne({ username });
+  return await User.findOne({ username })
+};
+const getProfileByUsername = async (username) => {
+  return await User.findOne({ username }).select("-password -__v -refreshToken");
 };
 const getUserByEmail = async (email) => {
-  return await User.findOne({ email });
+  return await User.findOne({ email })
 };
 
 const getAllUsers = async (userId) => {
@@ -57,6 +60,7 @@ module.exports = {
   getUserByEmail,
   getUserById,
   getUserByUsername,
+  getProfileByUsername,
   passwordVerify,
   getAllUsers,
   getUsersByIds, // Export the new method
