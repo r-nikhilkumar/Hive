@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 
 import { Button } from "@/components/ui";
-import { GridPostList, Loader } from "@/components/shared";
+import { GridPostList } from "@/components/shared";
 import { useGetUserByIdQuery } from "@/redux/api/userApi";
 import { useSelector } from "react-redux";
 import { useGetPostByUserIdQuery } from "@/redux/api/postApi";
