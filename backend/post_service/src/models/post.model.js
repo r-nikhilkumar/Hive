@@ -4,6 +4,7 @@ const PostSchema = mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
+        index: true
     },
     description: {
         type: String,

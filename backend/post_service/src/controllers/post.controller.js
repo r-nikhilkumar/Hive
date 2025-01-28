@@ -10,6 +10,7 @@ const {
   deleteComment,
   addComment,
   toggleLikePost,
+  getPostByUserId,
 } = require("../services/post.service");
 const ApiError = require("../utils/ApiError");
 const ApiResponse = require("../utils/ApiResponse");
@@ -63,6 +64,19 @@ const getPostApi = async (req, res) => {
       .json(ApiError.error("Failed to fetch post", error.message));
   }
 };
+
+const getPostByUseridApi = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const posts = await getPostByUserId(userId);
+    return res.status(200).json(ApiResponse.success(posts, "Posts sent"));
+  }catch(error){
+    console.error("General error: ", error.message);
+    return res
+    .status(500)
+    .json(ApiError.error("Failed to fetch posts", error.message));
+  }
+}
 
 const getPostsApi = async (req, res) => {
   try {
@@ -211,4 +225,5 @@ module.exports = {
   deletePostApi,
   toggleLikePostApi,
   toggleCommentApi,
+  getPostByUseridApi
 };

@@ -14,6 +14,15 @@ const getPostById = async (id) => {
   return post;
 };
 
+const getPostByUserId = async (userId) => {
+  const posts = await Post.find({ userId })
+    .sort({ date: -1 }) // Sort by date in descending order
+    .select("-__v")
+    .populate({ path: "comments", select: "-postId -_id -__v", options: { lean: true } }).lean()
+    .populate({ path: "likes", select: "-postId -_id -__v", options: { lean: true } }).lean();
+  return posts;
+};
+
 const getPosts = async () => {
   const posts = await Post.find()
     .sort({ date: -1 }) // Sort by date in descending order
@@ -140,6 +149,7 @@ module.exports = {
   getPostById,
   getPosts,
   getPulse,
+  getPostByUserId,
   createPost,
   updatePost,
   deletePost,
