@@ -77,7 +77,7 @@ export const dateFormated = (date: string | Date) => {
 
     // Return formatted distance to now
     return formatDistanceToNow(parsedDate, { addSuffix: true });
-  } catch (error) {
+  } catch (error:any) {
     console.error("Error formatting date:", error.message);
     return "Invalid date";
   }
