@@ -3,11 +3,16 @@ import { sidebarLinks } from "@/constants";
 import { Button } from "@/components/ui/button";
 import Loader from "./Loader";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useGetUserByIdQuery } from "@/redux/api/userApi";
 
 const LeftSidebar = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(pathname.startsWith("/chats"));
+  const userId = useSelector((state: any) => state.auth.userId);
+  const { data: userDetails } =
+      useGetUserByIdQuery(userId, { skip: !userId });
   const hasNotifications = true;
   const isLoading = false;
   const updatedLinks = sidebarLinks.map((link) => {
@@ -90,12 +95,13 @@ const LeftSidebar = () => {
             <Loader />
           </div>
         ) : (
-          <NavLink to={`/u/${1}`} className={`flex ${isCollapsed ? "justify-center" : "pl-2.5 items-center"}`}>
+          <NavLink to={`/u/${userId}`} className={`flex ${isCollapsed ? "justify-center" : "pl-2.5 items-center"}`}>
           <img
-            src="/assets/icons/profile-placeholder.svg"
+            src={userDetails?.data?.profilePic || "/assets/icons/profile-placeholder.svg"}
             alt="profile"
             width={25}
             height={25}
+            className="rounded-full"
             title={isCollapsed ? "Profile" : ""}
           />
           {!isCollapsed && <p className="pl-3">Profile</p>}

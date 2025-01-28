@@ -17,7 +17,7 @@ function ChatSidebar() {
   // Fetch chat rooms
   const {
     data: chatRooms,
-    isFetching: isLoading,
+    isLoading: isLoading,
     isSuccess,
     isError,
   } = useGetChatRoomsQuery(undefined);

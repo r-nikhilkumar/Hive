@@ -1,10 +1,15 @@
+import { useGetUserByIdQuery } from "@/redux/api/userApi";
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
 const Topbar = () => {
   const navigate = useNavigate();
   const isSuccess = false;
   const hasNotifications = true;
+  const userId = useSelector((state: any) => state.auth.userId);
+  const { data: userDetails } =
+      useGetUserByIdQuery(userId, { skip: !userId });
 
   // const signOut = ()=>{
   //   navigate("/sign-in")
@@ -41,9 +46,9 @@ const Topbar = () => {
           <Link to={`/chats`} className="flex-center gap-3">
             <img src="/assets/icons/chat.svg" alt="chat" width={34}/>
           </Link>
-          <Link to={`/u/${"user.id"}`} className="flex-center gap-3">
+          <Link to={`/u/${userId}`} className="flex-center gap-3">
             <img
-              src={"/assets/icons/profile-placeholder.svg"}
+              src={userDetails?.data?.profilePic || "/assets/icons/profile-placeholder.svg"}
               alt="profile"
               className="h-8 w-8 rounded-full"
             />

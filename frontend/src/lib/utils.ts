@@ -58,8 +58,30 @@ export const checkIsLiked = (likeList: string[], userId: string) => {
   return likeList.includes(userId);
 };
 
-export const dateFormated = (date: string) => {
-  return formatDistanceToNow(new Date(Number(date)), { addSuffix: true });
+
+export const dateFormated = (date: string | Date) => {
+  try {
+    // Handle null, undefined, or invalid inputs
+    if (!date) return "Invalid date";
+
+    // Convert date to a valid Date object
+    const parsedDate = 
+      typeof date === "string" 
+        ? new Date(isNaN(Number(date)) ? date : Number(date)) 
+        : new Date(date);
+
+    // Check if the parsed date is valid
+    if (isNaN(parsedDate.getTime())) {
+      throw new Error("Invalid date");
+    }
+
+    // Return formatted distance to now
+    return formatDistanceToNow(parsedDate, { addSuffix: true });
+  } catch (error) {
+    console.error("Error formatting date:", error.message);
+    return "Invalid date";
+  }
 };
+
 
 

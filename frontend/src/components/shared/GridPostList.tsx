@@ -10,6 +10,11 @@ const GridPostList = ({
   showUser = true,
 }: any) => {
   // const { user } = useUserContext();
+  if(posts.length==0) return (
+    <div className="flex justify-center items-center h-screen">
+      <h1 className="text-3xl font-bold">No posts found!</h1>
+    </div>
+  )
 
   return (
     <ul className="grid-container">

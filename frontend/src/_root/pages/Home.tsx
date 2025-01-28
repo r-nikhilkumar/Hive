@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 function Home() {
   const { data: postsDetails, isLoading } = useGetPostsQuery(null);
   const userId = useSelector((state: any) => state.auth.userId);
-  const { data: userDetails, isFetching: isUserDetailsLoading } =
+  const { data: userDetails, isLoading: isUserDetailsLoading } =
     useGetUserByIdQuery(userId, { skip: !userId });
   const { data: allUsers, isLoading: isAllUsers } = useGetUsersQuery(undefined);
   if (isLoading || isUserDetailsLoading || isAllUsers)

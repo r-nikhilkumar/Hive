@@ -28,6 +28,10 @@ export const postApi = createApi({
       query: (postId) => `/get-post/${postId}`,
       providesTags: ["Post"],
     }),
+    getPostByUserId: builder.query({
+      query: (userId) => `/get-post-uid/${userId}`,
+      providesTags: ["Post"],
+    }),
     createPost: builder.mutation({
       query: (postData) => ({
         url: "/create-post",
@@ -155,4 +159,5 @@ export const {
   useToggleLikeMutation,
   useToggleCommentMutation,
   useGetPulseVideosQuery,
+  useGetPostByUserIdQuery
 } = postApi;
