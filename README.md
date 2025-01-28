@@ -106,11 +106,12 @@ Below are the key dependencies required for running the project:
      ```
 
 4. Start the services using Docker Compose:
+   I have created image already, just have to up the contrainers
    ```bash
-   docker-compose up --build
+   docker-compose up
    ```
 
-5. For local development without Docker:
+6. For local development without Docker:
    - Start MongoDB and Redis manually.
    - Start the backend services:
      ```bash
