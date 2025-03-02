@@ -190,4 +190,3 @@ Below are the key dependencies required for running the project:
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
-```
