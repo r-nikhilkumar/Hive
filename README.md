@@ -94,8 +94,8 @@ Below are the key dependencies required for running the project:
      CHAT_MONGO_URI=mongodb://localhost:27017/hive-chat
      POST_MONGO_URI=mongodb://localhost:27017/hive-post
      REDIS_URL=redis://localhost:6379
-     JWT_SECRET_KEY="hiveisheretoconnect"
-     JWT_REFRESH_SECRET="hiveisheretoconnectAgainAndAgain"
+     JWT_SECRET_KEY=<your_secret_here>
+     JWT_REFRESH_SECRET=<your_refresh_secret_here>
      REDIS_USERNAME=<put_here_yours_one>
      REDIS_PASSWORD=<put_here_yours_one>
      REDIS_HOST=<put_here_yours_one>
